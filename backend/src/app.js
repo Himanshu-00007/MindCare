@@ -13,4 +13,7 @@ app.use("/api/v1/students",router);
 
 import counsellorRouter from "./routes/counsellor.routes.js"
 app.use("/api/v1/counsellors",counsellorRouter);
+
+import aiChatRouter from "./routes/aiChat.routes.js";
+app.use("/api/v1/chatbot",aiChatRouter);
 export {app};

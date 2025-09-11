@@ -21,7 +21,7 @@ const studentRegister = async (req, res) => {
       return res.status(400).json({ message: "Name is required" });
     }
     if (!institution || !institution.trim()) {
-      return res.status(400).json({ message: "Name is required" });
+      return res.status(400).json({ message: "Institution Name is required" });
     }
 
     if (!email || !email.trim()) {
