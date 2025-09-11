@@ -1,6 +1,6 @@
 import  {Router} from  "express";
 import { upload } from "../middlewares/multer.js";
-import { studentRegister } from "../controllers/student.controllers.js";
+import { studentLogin, studentRegister } from "../controllers/student.controllers.js";
 const router=Router();
 router.route("/student-register").post(upload.fields([
     {
@@ -8,4 +8,6 @@ router.route("/student-register").post(upload.fields([
         maxCount:1,
     }
 ]),studentRegister);
+
+router.route("/student-login").post(studentLogin);
 export default router;

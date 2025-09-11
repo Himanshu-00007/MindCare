@@ -1,6 +1,18 @@
 import Student from "../models/student.model.js";
 import { upload } from "../middlewares/multer.js";
 import { cloudinaryUpload,cloudinaryDelete } from "../utils/cloudinary.js";
+const generateTokenAndRefreshToken = async (userId) => {
+  try {
+    const user = await Student.findById(userId);
+    const Token = await user.generateToken();
+    const refreshToken = await user.generateRefreshToken();
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+    return { Token, refreshToken };
+  } catch (error) {
+    throw new Error("something went wrong while generating tokens and refresh tokens");
+  }
+};
 const studentRegister = async (req, res) => {
   try {
     const { name, email, mobile_number, password, age, gender, course } = req.body;
@@ -70,4 +82,35 @@ const studentRegister = async (req, res) => {
     });
   }
 };
-export {studentRegister}
+const studentLogin=async(req,res)=>{
+  try{
+    const {email,password}=req.body;
+    if(!email || !password){
+      return res.status(400).json({ message: "email or password is required" });
+    }
+    const user=await Student.findOne({email});
+    if(!user){
+      return res.status(400).json({ message: "invalid email" });
+    }
+    const {Token,refreshToken}=await generateTokenAndRefreshToken(user._id);
+    const loggedInUser=await Student.findById(user._id).select("-password -refreshToken");
+    const options={httpOnly:true,secure:true};
+    return  res.status(200)
+    .cookie("Token",Token,options)
+    .cookie("refreshToken",refreshToken,options)
+    .json({
+      loggedInUser,
+      message:"user loggedIn successfully",
+      Token,
+      refreshToken
+    })
+
+  }
+  catch(error){
+    return res.status(500).json({
+      message: "error while student loggedIn",
+      error:error.message,
+    });
+  }
+}
+export {studentRegister,studentLogin,generateTokenAndRefreshToken}
