@@ -1,9 +1,9 @@
-import Student from "../models/student.model.js";
+import Counsellor from "../models/Counsellor.model.js";
 import { upload } from "../middlewares/multer.js";
 import { cloudinaryUpload,cloudinaryDelete } from "../utils/cloudinary.js";
 const generateTokenAndRefreshToken = async (userId) => {
   try {
-    const user = await Student.findById(userId);
+    const user = await Counsellor.findById(userId);
     const Token = await user.generateToken();
     const refreshToken = await user.generateRefreshToken();
     user.refreshToken = refreshToken;
@@ -13,9 +13,9 @@ const generateTokenAndRefreshToken = async (userId) => {
     throw new Error("something went wrong while generating tokens and refresh tokens");
   }
 };
-const studentRegister = async (req, res) => {
+const counsellorRegister = async (req, res) => {
   try {
-    const { name, email, mobile_number, password, age, gender, course } = req.body;
+    const { name, email, password, designation} = req.body;
 
     if (!name || !name.trim()) {
       return res.status(400).json({ message: "Name is required" });
@@ -25,28 +25,17 @@ const studentRegister = async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    if (!mobile_number ) {
-      return res.status(400).json({ message: "Mobile number is required" });
-    }
 
     if (!password || !password.trim()) {
       return res.status(400).json({ message: "Password is required" });
     }
 
-    if (!age) {
-      return res.status(400).json({ message: "Age is required" });
+    if (!designation || !designation.trim()) {
+      return res.status(400).json({ message: "designation is required" });
     }
-
-    if (!gender || !gender.trim()) {
-      return res.status(400).json({ message: "Gender is required" });
-    }
-
-    if (!course || !course.trim()) {
-      return res.status(400).json({ message: "Course is required" });
-    }
-    const existedUser=await Student.findOne({email});
+    const existedUser=await Counsellor.findOne({email});
     if(existedUser){
-        return res.status(400).json({ message: "student already exist" });
+        return res.status(400).json({ message: "counsellor already exist" });
     }
     
     let profile="";
@@ -57,52 +46,49 @@ const studentRegister = async (req, res) => {
           return res.status(400).json({ message: "profile upload failed" });
         }
     }
-    const student=await Student.create({
+    const counsellor=await Counsellor.create({
         name,
         email,
-        mobile_number,
         password,
-        gender,
-        age,
-        course,
+        designation,
         profile:profile?.url || "",
     })
-    const createdUser=await Student.findById(student._id).select("-password -refreshToken");
+    const createdUser=await Counsellor.findById(counsellor._id).select("-password -refreshToken");
     if(!createdUser){
-        return res.status(400).json({ message: "something went wrong while registering student" });
+        return res.status(400).json({ message: "something went wrong while registering " });
     }
     return res.status(200).json({
         createdUser,
-        message:"student created successfully"
+        message:"counsellor created successfully"
     })
   } catch (error) {
     return res.status(500).json({
-      message: "error while student registered",
+      message: "error while registered",
       error:error.message,
     });
   }
 };
-const studentLogin=async(req,res)=>{
+const counsellorLogin=async(req,res)=>{
   try{
     const {email,password}=req.body;
     if(!email || !password){
       return res.status(400).json({ message: "email or password is required" });
     }
-    const user=await Student.findOne({email});
+    const user=await Counsellor.findOne({email});
     if(!user){
       return res.status(400).json({ message: "invalid email" });
     }
     const isPasswordValid = await user.isPasswordCorrect(password);
     if (!isPasswordValid) return res.status(400).json({ message: "invalid password" });
     const {Token,refreshToken}=await generateTokenAndRefreshToken(user._id);
-    const loggedInUser=await Student.findById(user._id).select("-password -refreshToken");
+    const loggedInUser=await Counsellor.findById(user._id).select("-password -refreshToken");
     const options={httpOnly:true,secure:true};
     return  res.status(200)
     .cookie("Token",Token,options)
     .cookie("refreshToken",refreshToken,options)
     .json({
       loggedInUser,
-      message:"user loggedIn successfully",
+      message:"counsellor loggedIn successfully",
       Token,
       refreshToken
     })
@@ -110,9 +96,9 @@ const studentLogin=async(req,res)=>{
   }
   catch(error){
     return res.status(500).json({
-      message: "error while student loggedIn",
+      message: "error while counsellor loggedIn",
       error:error.message,
     });
   }
 }
-export {studentRegister,studentLogin,generateTokenAndRefreshToken}
+export {counsellorRegister,counsellorLogin,generateTokenAndRefreshToken}

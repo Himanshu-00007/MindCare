@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 const counsellorSchema = new mongoose.Schema({
   name: { type: String, required: true },
   profile:{
@@ -14,7 +15,6 @@ const counsellorSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   designation: { type: String }, // Psychologist / Psychiatrist / Mentor
-  specialization: [String], // e.g., ["Stress", "Depression"]
   availability_schedule: [
     {
       day: String,

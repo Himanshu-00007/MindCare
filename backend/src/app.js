@@ -9,4 +9,8 @@ app.use(express.static("public"))
 app.use(cookieParser());
 import router from "./routes/student.routes.js"
 app.use("/api/v1/students",router);
+
+
+import counsellorRouter from "./routes/counsellor.routes.js"
+app.use("/api/v1/counsellors",counsellorRouter);
 export {app};
