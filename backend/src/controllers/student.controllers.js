@@ -115,4 +115,23 @@ const studentLogin=async(req,res)=>{
     });
   }
 }
-export {studentRegister,studentLogin,generateTokenAndRefreshToken}
+const studentLogout = async (req, res) => {
+  try {
+    await Student.findByIdAndUpdate(
+      req.user._id,
+      { $unset: { refreshToken: 1 } },
+      { new: true }
+    );
+
+    const options = { httpOnly: true, secure: true };
+
+    return res
+      .status(200)
+      .clearCookie("Token", options)
+      .clearCookie("refreshToken", options)
+      .json({ message: "student logout successfully" });
+  } catch (error) {
+    return res.status(400).json({ message: "error in logging out" });
+  }
+};
+export {studentRegister,studentLogin,generateTokenAndRefreshToken,studentLogout}

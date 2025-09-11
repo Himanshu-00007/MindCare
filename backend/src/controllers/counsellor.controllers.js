@@ -101,4 +101,23 @@ const counsellorLogin=async(req,res)=>{
     });
   }
 }
-export {counsellorRegister,counsellorLogin,generateTokenAndRefreshToken}
+const counsellorLogout = async (req, res) => {
+  try {
+    await Counsellor.findByIdAndUpdate(
+      req.user._id,
+      { $unset: { refreshToken: 1 } },
+      { new: true }
+    );
+
+    const options = { httpOnly: true, secure: true };
+
+    return res
+      .status(200)
+      .clearCookie("Token", options)
+      .clearCookie("refreshToken", options)
+      .json({ message: "counsellor logout successfully" });
+  } catch (error) {
+    return res.status(400).json({ message: "error in logging out" });
+  }
+};
+export {counsellorRegister,counsellorLogin,generateTokenAndRefreshToken,counsellorLogout}

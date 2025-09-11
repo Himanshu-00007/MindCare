@@ -1,6 +1,8 @@
 import  {Router} from  "express";
 import { upload } from "../middlewares/multer.js";
-import { counsellorLogin, counsellorRegister } from "../controllers/counsellor.controllers.js";
+import { counsellorLogin, counsellorLogout, counsellorRegister } from "../controllers/counsellor.controllers.js";
+import { verifyJWT } from "../middlewares/counsellorAuth.js";
+
 const router=Router();
 router.route("/counsellor-register").post(upload.fields([
     {
@@ -10,4 +12,5 @@ router.route("/counsellor-register").post(upload.fields([
 ]),counsellorRegister);
 
 router.route("/counsellor-login").post(counsellorLogin);
+router.route("/counsellor-logout").delete(verifyJWT,counsellorLogout)
 export default router;
