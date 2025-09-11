@@ -15,9 +15,12 @@ const generateTokenAndRefreshToken = async (userId) => {
 };
 const studentRegister = async (req, res) => {
   try {
-    const { name, email, mobile_number, password, age, gender, course } = req.body;
+    const { name, email, mobile_number, password, age, gender, course,institution } = req.body;
 
     if (!name || !name.trim()) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+    if (!institution || !institution.trim()) {
       return res.status(400).json({ message: "Name is required" });
     }
 
@@ -64,6 +67,7 @@ const studentRegister = async (req, res) => {
         password,
         gender,
         age,
+        institution,
         course,
         profile:profile?.url || "",
     })

@@ -9,6 +9,12 @@ const adminSchema = new mongoose.Schema(
     profileId:{
       type:String,
     },
+    role: {
+      type: String,
+      enum: ["super_admin", "institution_admin"],
+      default: "institution_admin",
+    },
+    institution: { type: String, required: true }, // only for institution admins
     refreshToken:{
         type:String,
      },
