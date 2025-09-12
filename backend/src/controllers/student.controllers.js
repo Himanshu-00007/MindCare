@@ -52,14 +52,7 @@ const studentRegister = async (req, res) => {
         return res.status(400).json({ message: "student already exist" });
     }
     
-    let profile="";
     
-    if(req.files?.profile[0]?.buffer){
-         profile=await cloudinaryUpload(profileBuffer,"profile");
-        if(!profile?.url){
-          return res.status(400).json({ message: "profile upload failed" });
-        }
-    }
     const student=await Student.create({
         name,
         email,
@@ -69,7 +62,7 @@ const studentRegister = async (req, res) => {
         age,
         institution,
         course,
-        profile:profile?.url || "",
+        
     })
     const createdUser=await Student.findById(student._id).select("-password -refreshToken");
     if(!createdUser){

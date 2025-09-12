@@ -1,26 +1,15 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
 const counsellorSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  profile:{
-      type:String, //cloudinary url
-    },
-    profileId:{
-      type:String,
-    },
-  refreshToken:{
-        type:String,
-     },
+  refreshToken: { type: String },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   designation: { type: String }, // Psychologist / Psychiatrist / Mentor
   availability_schedule: [
-    {
-      day: String,
-      start_time: String,
-      end_time: String
-    }
+    { day: String, start_time: String, end_time: String }
   ],
   appointments: [
     {
@@ -36,35 +25,37 @@ const counsellorSchema = new mongoose.Schema({
       comment: String
     }
   ]
-},{timestamps:true});
-counsellorSchema.pre("save",async function(next){
-  if(this.isModified("password")){
-  this.password=await bcrypt.hash(this.password,10);
-  next();
-  }
-  else{
-    return next();
-  }
-});
-counsellorSchema.methods.isPasswordCorrect=async function(password){
-  return bcrypt.compare(password,this.password);
-}
-counsellorSchema.methods.generateToken=async function(){
-  return jwt.sign({
-    _id:this._id,
-    email:this.email,
-    name:this.name
-  },process.env.TOKEN,{
-    expiresIn:process.env.TOKEN_EXPIRY
-  })
-}
-counsellorSchema.methods.generateRefreshToken=async function(){
-  return jwt.sign({
-    _id:this._id,
-  },process.env.REFRESH_TOKEN,{
-    expiresIn:process.env.REFRESH_TOKEN_EXPIRY
-  })
-}
+}, { timestamps: true });
 
-const Counsellor = mongoose.model("Counsellor", counsellorSchema);
+counsellorSchema.pre("save", async function(next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
+
+counsellorSchema.methods.isPasswordCorrect = async function(password) {
+  return bcrypt.compare(password, this.password);
+};
+
+counsellorSchema.methods.generateToken = async function() {
+  return jwt.sign({
+    _id: this._id,
+    email: this.email,
+    name: this.name
+  }, process.env.TOKEN, {
+    expiresIn: process.env.TOKEN_EXPIRY
+  });
+};
+
+counsellorSchema.methods.generateRefreshToken = async function() {
+  return jwt.sign({
+    _id: this._id,
+  }, process.env.REFRESH_TOKEN, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+  });
+};
+
+const Counsellor = mongoose.models.Counsellor || mongoose.model("Counsellor", counsellorSchema);
+
 export default Counsellor;

@@ -16,4 +16,7 @@ app.use("/api/v1/counsellors",counsellorRouter);
 
 import aiChatRouter from "./routes/aiChat.routes.js";
 app.use("/api/v1/chatbot",aiChatRouter);
+
+import bookingRouter from "./routes/booking.routes.js";
+app.use("/api/v1/bookings",bookingRouter);
 export {app};

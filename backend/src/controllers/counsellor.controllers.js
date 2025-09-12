@@ -38,20 +38,13 @@ const counsellorRegister = async (req, res) => {
         return res.status(400).json({ message: "counsellor already exist" });
     }
     
-    let profile="";
     
-    if(req.files?.profile[0]?.buffer){
-         profile=await cloudinaryUpload(profileBuffer,"profile");
-        if(!profile?.url){
-          return res.status(400).json({ message: "profile upload failed" });
-        }
-    }
     const counsellor=await Counsellor.create({
         name,
         email,
         password,
         designation,
-        profile:profile?.url || "",
+       
     })
     const createdUser=await Counsellor.findById(counsellor._id).select("-password -refreshToken");
     if(!createdUser){
