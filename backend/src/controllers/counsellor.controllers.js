@@ -119,7 +119,7 @@ const counsellorLogout = async (req, res) => {
 };
 const listCounsellors = async (req, res) => {
   try {
-    const counsellors = await Counsellor.find().select("_id name email");
+    const counsellors = await Counsellor.find().select("_id name email experience designation");
     return res.status(200).json({ counsellors });
   } catch (err) {
     console.error("listCounsellors error:", err);
