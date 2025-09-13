@@ -1,7 +1,7 @@
 
 import Booking from "../models/booking.model.js";
 import Student from "../models/student.model.js";
-import Counsellor from "../models/counsellor.model.js";
+import Counsellor from "../models/Counsellor.model.js";
 
 /**
  * Helper: check overlapping bookings for counsellor

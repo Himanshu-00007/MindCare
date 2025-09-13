@@ -63,6 +63,7 @@ const AuthPage: React.FC = () => {
     email: "",
     password: "",
     designation: "",
+    experience:"",
   });
 
   const [loginData, setLoginData] = useState({
@@ -256,6 +257,13 @@ const AuthPage: React.FC = () => {
                     name="designation"
                     placeholder="Designation"
                     value={counsellorData.designation}
+                    onChange={(e) => handleChange(e, "counsellor")}
+                  />
+                  <Input
+                    type="text"
+                    name="experience"
+                    placeholder="experience"
+                    value={counsellorData.experience}
                     onChange={(e) => handleChange(e, "counsellor")}
                   />
                 </>

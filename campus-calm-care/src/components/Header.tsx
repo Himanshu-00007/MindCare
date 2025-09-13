@@ -4,11 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-
-
-
 // ✅ Snackbar Component
-const Snackbar = ({ message, type, onClose }: { message: string; type: "success" | "error"; onClose: () => void }) => {
+const Snackbar = ({
+  message,
+  type,
+  onClose,
+}: {
+  message: string;
+  type: "success" | "error";
+  onClose: () => void;
+}) => {
   return (
     <div
       className={`fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white transition-all duration-300 ${
@@ -17,7 +22,9 @@ const Snackbar = ({ message, type, onClose }: { message: string; type: "success"
     >
       <div className="flex items-center justify-between space-x-4">
         <span>{message}</span>
-        <button onClick={onClose} className="text-white font-bold">×</button>
+        <button onClick={onClose} className="text-white font-bold">
+          ×
+        </button>
       </div>
     </div>
   );
@@ -27,12 +34,15 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState<string | null>(null);
-  const [snackbar, setSnackbar] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const Token = localStorage.getItem("Token");
-    const storedRole = localStorage.getItem("role"); 
+    const storedRole = localStorage.getItem("role");
     setIsLoggedIn(!!Token);
     setRole(storedRole);
   }, []);
@@ -44,12 +54,10 @@ const Header = () => {
     setTimeout(() => setSnackbar(null), 3000);
   };
 
-  const handleLogin = () => {
-    navigate("/auth");
-  };
+  const handleLogin = () => navigate("/auth");
 
   const handleDashboard = () => {
-    if (role === "student") navigate("/");
+    if (role === "student") navigate("/student-dashboard");
     else if (role === "counsellor") navigate("/counsellor/dashboard");
     else if (role === "admin") navigate("/admin/dashboard");
     else navigate("/");
@@ -63,7 +71,6 @@ const Header = () => {
     setRole(null);
     navigate("/");
 
-    // ✅ Snackbar trigger
     showSnackbar("Logged out successfully!", "success");
   };
 
@@ -86,10 +93,18 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">About</a>
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-            <a href="#resources" className="text-muted-foreground hover:text-foreground transition-colors">Resources</a>
-            <a href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">Contact</a>
+            <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
+              About
+            </a>
+            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+              Features
+            </a>
+            <a href="#resources" className="text-muted-foreground hover:text-foreground transition-colors">
+              Resources
+            </a>
+            <a href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
+              Contact
+            </a>
           </nav>
 
           {/* Desktop CTA Buttons */}
@@ -108,6 +123,15 @@ const Header = () => {
                 <Button variant="outline" size="sm" onClick={handleDashboard}>
                   Dashboard
                 </Button>
+                {role === "student" && (
+                  <Button
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => navigate("/student-booking")}
+                  >
+                    Book a Counsellor
+                  </Button>
+                )}
                 <Button size="sm" className="hover-glow" onClick={handleLogout}>
                   Logout
                 </Button>
@@ -125,7 +149,7 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Mobile Menu with Animation */}
+        {/* Mobile Menu */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -136,10 +160,18 @@ const Header = () => {
               className="md:hidden py-4 border-t border-border bg-background"
             >
               <nav className="flex flex-col space-y-4">
-                <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors" onClick={toggleMenu}>About</a>
-                <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors" onClick={toggleMenu}>Features</a>
-                <a href="#resources" className="text-muted-foreground hover:text-foreground transition-colors" onClick={toggleMenu}>Resources</a>
-                <a href="#contact" className="text-muted-foreground hover:text-foreground transition-colors" onClick={toggleMenu}>Contact</a>
+                <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors" onClick={toggleMenu}>
+                  About
+                </a>
+                <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors" onClick={toggleMenu}>
+                  Features
+                </a>
+                <a href="#resources" className="text-muted-foreground hover:text-foreground transition-colors" onClick={toggleMenu}>
+                  Resources
+                </a>
+                <a href="#contact" className="text-muted-foreground hover:text-foreground transition-colors" onClick={toggleMenu}>
+                  Contact
+                </a>
 
                 <div className="flex flex-col space-y-2 pt-4">
                   {!isLoggedIn ? (
@@ -156,6 +188,15 @@ const Header = () => {
                       <Button variant="outline" size="sm" onClick={() => { handleDashboard(); toggleMenu(); }}>
                         Dashboard
                       </Button>
+                      {role === "student" && (
+                        <Button
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          onClick={() => { navigate("/student-booking"); toggleMenu(); }}
+                        >
+                          Book a Counsellor
+                        </Button>
+                      )}
                       <Button size="sm" onClick={() => { handleLogout(); toggleMenu(); }}>
                         Logout
                       </Button>
@@ -168,9 +209,13 @@ const Header = () => {
         </AnimatePresence>
       </div>
 
-      {/* ✅ Snackbar Render */}
+      {/* ✅ Snackbar */}
       {snackbar && (
-        <Snackbar message={snackbar.message} type={snackbar.type} onClose={() => setSnackbar(null)} />
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={() => setSnackbar(null)}
+        />
       )}
     </header>
   );

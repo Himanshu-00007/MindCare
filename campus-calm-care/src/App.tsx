@@ -11,7 +11,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 
-
+import CouncellorBookingPage from "./components/booking/CounsellorBookingPage.jsx"
 import StudentChatPage from "./components/chat/StudentChatPage";
 import AuthPage from "./components/Authentication/AuthPage";
 
@@ -24,7 +24,7 @@ const router = createBrowserRouter(
     { path: "/", element: <Index /> },
     { path: "/auth", element: <AuthPage /> },
     { path: "/chat", element: <StudentChatPage /> },
-    
+    {path: "/student-booking", element: <CouncellorBookingPage/>},
     { path: "*", element: <NotFound /> },
   ],
   

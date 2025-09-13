@@ -15,9 +15,12 @@ const generateTokenAndRefreshToken = async (userId) => {
 };
 const counsellorRegister = async (req, res) => {
   try {
-    const { name, email, password, designation} = req.body;
+    const { name, email, password, designation,experience} = req.body;
 
     if (!name || !name.trim()) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+    if (!experience || !experience.trim()) {
       return res.status(400).json({ message: "Name is required" });
     }
 
@@ -44,6 +47,7 @@ const counsellorRegister = async (req, res) => {
         email,
         password,
         designation,
+        experience,
        
     })
     const createdUser=await Counsellor.findById(counsellor._id).select("-password -refreshToken");
@@ -113,4 +117,13 @@ const counsellorLogout = async (req, res) => {
     return res.status(400).json({ message: "error in logging out" });
   }
 };
-export {counsellorRegister,counsellorLogin,generateTokenAndRefreshToken,counsellorLogout}
+const listCounsellors = async (req, res) => {
+  try {
+    const counsellors = await Counsellor.find().select("_id name email");
+    return res.status(200).json({ counsellors });
+  } catch (err) {
+    console.error("listCounsellors error:", err);
+    return res.status(500).json({ message: "Error fetching counsellors", error: err.message });
+  }
+};
+export {counsellorRegister,counsellorLogin,generateTokenAndRefreshToken,counsellorLogout,listCounsellors}

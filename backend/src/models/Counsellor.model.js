@@ -8,6 +8,7 @@ const counsellorSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   designation: { type: String }, // Psychologist / Psychiatrist / Mentor
+  experience: { type: String },  // New field to describe experience (e.g., "5 years of clinical practice")
   availability_schedule: [
     { day: String, start_time: String, end_time: String }
   ],
