@@ -1,9 +1,9 @@
-// controllers/studentChatController.js
 import Chat from "../models/chat.model.js";
 import Student from "../models/student.model.js";
 import axios from "axios";
 import { mentalAidLibrary } from "../utils/mentalAidLibrary.js";
 
+// 🔹 Suicidal keywords check
 const suicideKeywords = [
   "kill myself", "end my life", "suicide", "i want to die", "cut myself", "worthless", "no reason to live"
 ];
@@ -13,6 +13,7 @@ function containsSuicidalText(text) {
   return suicideKeywords.some(k => t.includes(k));
 }
 
+// 🔹 Triage logic
 async function triageStudent(student, messageText) {
   let level = "low";
   let reason = [];
@@ -36,14 +37,15 @@ async function triageStudent(student, messageText) {
   return { level, reason: reason.join(", ") };
 }
 
+// 🔹 System prompt for AI
 function buildSystemPrompt(student, triage) {
   return `You are a compassionate, brief mental-health first-aid assistant for college students.
 - ${mentalAidLibrary.rules.join("\n- ")}
 
-Your goals:
+Goals:
 - ${mentalAidLibrary.goals.join("\n- ")}
 
-Coping techniques you can use:
+Coping techniques:
 ${Object.entries(mentalAidLibrary.techniques)
   .map(([k, v]) => `• ${k}: ${v}`)
   .join("\n")}
@@ -63,7 +65,7 @@ Student context:
 `;
 }
 
-// ✅ Gemini API call
+// 🔹 Call Gemini API
 async function callGemini(prompt, conversationHistory = []) {
   const GEMINI_KEY = process.env.GEMINI_API_KEY;
   if (!GEMINI_KEY) throw new Error("GEMINI_API_KEY not set");
@@ -76,23 +78,19 @@ async function callGemini(prompt, conversationHistory = []) {
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
     {
       contents: [
-        {
-          parts: [{ text: `${prompt}\n\nConversation history:\n${historyText}` }]
-        }
+        { parts: [{ text: `${prompt}\n\nConversation history:\n${historyText}` }] }
       ]
     },
     { headers: { "Content-Type": "application/json" } }
   );
 
   const candidates = response.data.candidates;
-  if (!candidates || !candidates.length) {
-    throw new Error("Gemini returned no candidates");
-  }
+  if (!candidates || !candidates.length) throw new Error("Gemini returned no candidates");
 
   return candidates[0].content.parts[0].text.trim();
 }
 
-// Main endpoint
+// 🔹 POST /chatbot/chat
 export const studentChat = async (req, res) => {
   try {
     const studentId = req.user._id;
@@ -109,7 +107,7 @@ export const studentChat = async (req, res) => {
 
     chat.messages.push({ sender: "student", text: message, meta: {} });
 
-    // 🚨 Escalation for high risk
+    // High-risk escalation
     if (triage.level === "high") {
       chat.lastTriage = { level: "high", reason: triage.reason, createdAt: new Date() };
       chat.escalatedToCounsellor = true;
@@ -122,11 +120,11 @@ export const studentChat = async (req, res) => {
       });
     }
 
-    // 🔹 Build system prompt with library + student context
     const systemPrompt = buildSystemPrompt(student, triage);
-    const history = (chat.messages || []).slice(-6).map(m => {
-      return { role: m.sender === "student" ? "user" : "assistant", content: m.text };
-    });
+    const history = (chat.messages || []).slice(-6).map(m => ({
+      role: m.sender === "student" ? "user" : "assistant",
+      content: m.text
+    }));
 
     const botReply = await callGemini(systemPrompt, history);
 
@@ -136,21 +134,19 @@ export const studentChat = async (req, res) => {
 
     const suggestBooking = triage.level === "medium";
 
-    return res.status(200).json({
-      reply: botReply,
-      triage,
-      suggestBooking
-    });
+    return res.status(200).json({ reply: botReply, triage, suggestBooking });
   } catch (error) {
     console.error("chat error:", error.response?.data || error.message);
     return res.status(500).json({ message: "Error in chat", error: error.message });
   }
 };
 
-
+// 🔹 GET /chatbot/history
 export const getChatHistory = async (req, res) => {
   try {
-    const { studentId } = req.params;
+    const studentId = req.user._id; // JWT se directly
+    if (!studentId) return res.status(400).json({ message: "studentId missing" });
+
     const chat = await Chat.findOne({ student: studentId }).populate("student", "name email institution");
     if (!chat) return res.status(404).json({ message: "No chat history found" });
 

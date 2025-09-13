@@ -1,4 +1,6 @@
+// StudentChatPage.tsx
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 interface Message {
@@ -6,27 +8,22 @@ interface Message {
   text: string;
 }
 
-interface ChatHistoryResponse {
-  messages: Message[];
-}
-
 interface ChatResponse {
   reply: string;
-  triage: {
-    level: string;
-    reason: string;
-  };
+  triage: { level: string; reason: string };
   suggestBooking: boolean;
 }
 
 const StudentChatPage: React.FC = () => {
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [suggestBooking, setSuggestBooking] = useState<boolean>(false);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [suggestBooking, setSuggestBooking] = useState(false);
+  const [snackbar, setSnackbar] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Auto-scroll when new message appears
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     chatContainerRef.current?.scrollTo({
       top: chatContainerRef.current.scrollHeight,
@@ -35,32 +32,43 @@ const StudentChatPage: React.FC = () => {
   }, [chatHistory]);
 
   useEffect(() => {
-    axios
-      .get<ChatHistoryResponse>(`/api/v1/chatbot/history`, { withCredentials: true })
-      .then((res) => {
-        setChatHistory(res.data.messages || []);
-      })
-      .catch((err) =>
-        console.error("History fetch error:", err.response?.data || err.message)
-      );
+    const token = localStorage.getItem("Token");
+    if (!token) {
+      setSnackbar({ message: "Please login to use chatbot", type: "error" });
+      setTimeout(() => navigate("/auth"), 1500);
+      return;
+    }
+
+    axios.get("http://localhost:5000/api/v1/chatbot/history", {
+      headers: { Authorization: "Bearer " + token }
+    })
+    .then(res => setChatHistory(res.data.messages || []))
+    .catch(err => console.error("History fetch error:", err.response?.data || err.message));
   }, []);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
 
     setLoading(true);
+    const token = localStorage.getItem("Token");
+    if (!token) {
+      setSnackbar({ message: "Please login to use chatbot", type: "error" });
+      setTimeout(() => navigate("/auth"), 1500);
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await axios.post<ChatResponse>(
-        `/api/v1/chatbot/chat`,
+        "http://localhost:5000/api/v1/chatbot/chat",
         { message },
-        { withCredentials: true }
+        { headers: { Authorization: "Bearer " + token } }
       );
 
-      setChatHistory((prev) => [
+      setChatHistory(prev => [
         ...prev,
         { sender: "student", text: message },
-        { sender: "ai", text: res.data.reply },
+        { sender: "ai", text: res.data.reply }
       ]);
 
       setSuggestBooking(res.data.suggestBooking);
@@ -77,24 +85,10 @@ const StudentChatPage: React.FC = () => {
       <h1 className="text-4xl font-bold mb-6 text-indigo-600">🧠 Mental Health Support</h1>
 
       <div className="w-full max-w-2xl bg-white rounded-lg shadow-md flex flex-col p-4">
-        <div
-          className="overflow-y-auto h-96 p-4 space-y-4 bg-gray-50 rounded"
-          ref={chatContainerRef}
-        >
-          {chatHistory.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                msg.sender === "student" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`px-4 py-2 rounded-lg max-w-xs break-words ${
-                  msg.sender === "student"
-                    ? "bg-indigo-500 text-white"
-                    : "bg-gray-300 text-black"
-                }`}
-              >
+        <div className="overflow-y-auto h-96 p-4 space-y-4 bg-gray-50 rounded" ref={chatContainerRef}>
+          {chatHistory.map((msg, i) => (
+            <div key={i} className={`flex ${msg.sender === "student" ? "justify-end" : "justify-start"}`}>
+              <div className={`px-4 py-2 rounded-lg max-w-xs break-words ${msg.sender === "student" ? "bg-indigo-500 text-white" : "bg-gray-300 text-black"}`}>
                 {msg.text}
               </div>
             </div>
@@ -104,9 +98,7 @@ const StudentChatPage: React.FC = () => {
         {suggestBooking && (
           <div className="my-4 p-3 bg-yellow-200 border border-yellow-400 rounded text-center">
             ⚠️ We recommend you book a counselling session for further support.
-            <button className="ml-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
-              Book Appointment
-            </button>
+            <button className="ml-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">Book Appointment</button>
           </div>
         )}
 
@@ -119,15 +111,17 @@ const StudentChatPage: React.FC = () => {
             placeholder="Type your message here..."
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
-          <button
-            onClick={sendMessage}
-            disabled={loading}
-            className="ml-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-          >
+          <button onClick={sendMessage} disabled={loading} className="ml-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
             {loading ? "Sending..." : "Send"}
           </button>
         </div>
       </div>
+
+      {snackbar && (
+        <div className={`fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white ${snackbar.type === "success" ? "bg-green-500" : "bg-red-500"}`}>
+          {snackbar.message}
+        </div>
+      )}
     </div>
   );
 };

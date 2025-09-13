@@ -12,8 +12,21 @@ import {
   Heart,
   Send
 } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 const ContactSection = () => {
+  const navigate = useNavigate();
+  const handleStartChat = () => {
+  const id = localStorage.getItem("id");
+  const Token = localStorage.getItem("Token");
+
+  if (id && Token) {
+    navigate("/chat"); // AuthGuard will allow access
+  } else {
+    navigate("/auth"); // Not logged in → redirect to login
+  }
+};
+
   const contactMethods = [
     {
       icon: MessageCircle,
@@ -21,7 +34,8 @@ const ContactSection = () => {
       description: 'Get instant help through our secure chat system',
       action: 'Start Chat',
       availability: '24/7 Available',
-      primary: true
+      primary: true,
+      onClick: handleStartChat 
     },
     {
       icon: Phone,
@@ -29,14 +43,16 @@ const ContactSection = () => {
       description: 'Immediate support for mental health emergencies',
       action: 'Call Now',
       availability: 'Emergency Only',
-      urgent: true
+      urgent: true,
+      onClick: () => window.location.href = "tel:+911234567890" // ✅ phone call
     },
     {
       icon: Mail,
       title: 'Email Support',
       description: 'Send us your questions and concerns',
       action: 'Send Email',
-      availability: 'Response in 24hrs'
+      availability: 'Response in 24hrs',
+      onClick: () => window.location.href = "mailto:support@mindcare.com" // ✅ mailto link
     }
   ];
 
@@ -115,6 +131,7 @@ const ContactSection = () => {
                   variant={method.primary ? 'default' : method.urgent ? 'destructive' : 'outline'}
                   size="sm"
                   className="w-full hover-glow"
+                  onClick={method.onClick} // ✅ handle action
                 >
                   {method.action}
                 </Button>
@@ -123,6 +140,7 @@ const ContactSection = () => {
           ))}
         </div>
 
+        {/* Contact Form + Campus Info */}
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Form */}
           <Card className="border-0 shadow-elegant bg-background animate-fade-in">
