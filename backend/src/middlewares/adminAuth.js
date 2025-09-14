@@ -2,13 +2,13 @@ import jwt from "jsonwebtoken";
 import Admin from "../models/admin.model.js"
 export const verifyJWT=async(req,res,next)=>{
     try{
-        const Token=req.cookies?.Token || req.header("Authorization").replace("Bearer ","");
-        if(!Token){
+        const token=req.cookies?.Tokens || req.header("Authorization").replace("Bearer ","");
+        if(!token){
             return res.status(400).json({
             message:"unauthorized token"
             })
         }
-        const decodedToken=jwt.verify(Token,process.env.TOKEN)
+        const decodedToken=jwt.verify(token,process.env.TOKEN)
         const user=await Admin.findById(decodedToken?._id).select("-password -refreshTokens");
         if(!user){
             return res.status(401).json({

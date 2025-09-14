@@ -1,19 +1,10 @@
 import mongoose from "mongoose";
-
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken";
 const adminSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    profile:{
-      type:String, //cloudinary url
-    },
-    profileId:{
-      type:String,
-    },
-    role: {
-      type: String,
-      enum: ["super_admin", "institution_admin"],
-      default: "institution_admin",
-    },
+    
     institution: { type: String, required: true }, // only for institution admins
     refreshToken:{
         type:String,
@@ -34,18 +25,7 @@ const adminSchema = new mongoose.Schema(
     counsellors: [{ type: mongoose.Schema.Types.ObjectId, ref: "Counsellor" }],
 
     // Psychoeducational resources (Cloudinary uploads)
-    video: {
-      type: String // Cloudinary URL
-    },
-    video_obj_id: {
-      type: String // Cloudinary public_id
-    },
-    image: {
-      type: String // Cloudinary URL
-    },
-    image_obj_id: {
-      type: String // Cloudinary public_id
-    }
+    
   },
   { timestamps: true } 
 );

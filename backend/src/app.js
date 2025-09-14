@@ -27,4 +27,12 @@ app.use("/api/v1/chatbot",aiChatRouter);
 
 import bookingRouter from "./routes/booking.routes.js";
 app.use("/api/v1/bookings",bookingRouter);
+
+import adminRouter from "./routes/admin.routes.js";
+app.use("/api/v1/admins",adminRouter);
+
+import videoRouter from "./routes/video.routes.js";
+app.use("/api/v1/videos",videoRouter);
+
+
 export {app};

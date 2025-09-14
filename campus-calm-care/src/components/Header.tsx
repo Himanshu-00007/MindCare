@@ -59,7 +59,7 @@ const Header = () => {
   const handleDashboard = () => {
     if (role === "student") navigate("/student-dashboard");
     else if (role === "counsellor") navigate("/counsellor/dashboard");
-    else if (role === "admin") navigate("/admin/dashboard");
+    else if (role === "admin") navigate("/video-dashboard");
     else navigate("/");
   };
 

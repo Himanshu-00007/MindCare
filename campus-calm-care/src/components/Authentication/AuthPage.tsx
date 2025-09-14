@@ -127,7 +127,7 @@ const AuthPage: React.FC = () => {
     setTimeout(() => {
       if (role === "student") navigate("/");
       if (role === "counsellor") navigate("/counsellor/dashboard");
-      if (role === "admin") navigate("/admin/dashboard");
+      if (role === "admin") navigate("/");
     }, 1500);
   } catch (err: any) {
     showSnackbar(

@@ -15,7 +15,8 @@ import StudentBookingPage from "./components/booking/StudentBookingPage"
 import CounsellorBookingPage from "./components/booking/CounsellorBookingPage";
 import StudentChatPage from "./components/chat/StudentChatPage";
 import AuthPage from "./components/Authentication/AuthPage";
-import AboutSection from "./components/AboutSection";
+import VideoDashboard from "./components/ResourceHub/VideoDashboard";
+
 
 // Initialize react-query
 const queryClient = new QueryClient();
@@ -28,6 +29,8 @@ const router = createBrowserRouter(
     { path: "/chat", element: <StudentChatPage /> },
     {path: "/student-booking", element: <StudentBookingPage/>},
     {path: "/counsellor-booking", element: <CounsellorBookingPage />},
+    {path: "/video-dashboard", element: <VideoDashboard />},
+
     { path: "*", element: <NotFound /> },
     
   ],
