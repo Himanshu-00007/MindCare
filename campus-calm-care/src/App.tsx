@@ -11,9 +11,11 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
 
-import CouncellorBookingPage from "./components/booking/CounsellorBookingPage.jsx"
+import StudentBookingPage from "./components/booking/StudentBookingPage"
+import CounsellorBookingPage from "./components/booking/CounsellorBookingPage";
 import StudentChatPage from "./components/chat/StudentChatPage";
 import AuthPage from "./components/Authentication/AuthPage";
+import AboutSection from "./components/AboutSection";
 
 // Initialize react-query
 const queryClient = new QueryClient();
@@ -24,8 +26,10 @@ const router = createBrowserRouter(
     { path: "/", element: <Index /> },
     { path: "/auth", element: <AuthPage /> },
     { path: "/chat", element: <StudentChatPage /> },
-    {path: "/student-booking", element: <CouncellorBookingPage/>},
+    {path: "/student-booking", element: <StudentBookingPage/>},
+    {path: "/counsellor-booking", element: <CounsellorBookingPage />},
     { path: "*", element: <NotFound /> },
+    
   ],
   
 );

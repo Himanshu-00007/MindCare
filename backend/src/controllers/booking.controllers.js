@@ -151,3 +151,36 @@ export const getMyBooking = async (req, res) => {
     return res.status(500).json({ message: "Error fetching my booking", error: err.message });
   }
 };
+export const getMyBookingsForCounsellor = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ counsellor: req.user._id })
+      .sort({ start: 1 })
+      .populate("student", "name email institution")
+      .populate("counsellor", "name email");
+
+    return res.status(200).json({ bookings });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error fetching counsellor bookings", error: err.message });
+  }
+};
+export const cancelMyBookingAsCounsellor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
+
+    // Check if the current counsellor owns this booking
+    if (booking.counsellor.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized to cancel this booking" });
+    }
+
+    booking.status = "cancelled";
+    await booking.save();
+
+    return res.status(200).json({ message: "Booking cancelled successfully by counsellor", booking });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error cancelling booking", error: err.message });
+  }
+};

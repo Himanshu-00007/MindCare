@@ -5,17 +5,25 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header";
 
-const CounsellorBookingPage = () => {
-  const [counsellors, setCounsellors] = useState([]);
-  const [selectedCounsellor, setSelectedCounsellor] = useState(null);
-  const [start, setStart] = useState("");
-  const [duration, setDuration] = useState(60);
-  const [notes, setNotes] = useState("");
-  const [token, setToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [bookedCounsellorId, setBookedCounsellorId] = useState(null);
-  const [bookingId, setBookingId] = useState(null);
+interface Counsellor {
+  _id: string;
+  name: string;
+  email: string;
+  designation: string;
+  experience?: string;
+}
+
+const StudentBookingPage: React.FC = () => {
+  const [counsellors, setCounsellors] = useState<Counsellor[]>([]);
+  const [selectedCounsellor, setSelectedCounsellor] = useState<Counsellor | null>(null);
+  const [start, setStart] = useState<string>("");
+  const [duration, setDuration] = useState<number>(60);
+  const [notes, setNotes] = useState<string>("");
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [bookedCounsellorId, setBookedCounsellorId] = useState<string | null>(null);
+  const [bookingId, setBookingId] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -41,12 +49,12 @@ const CounsellorBookingPage = () => {
 
   const fetchCounsellors = async () => {
     try {
-      const res = await axios.get(
+      const res = await axios.get<{ counsellors: Counsellor[] }>(
         "http://localhost:5000/api/v1/counsellors/list",
         getConfig()
       );
       setCounsellors(res.data.counsellors);
-    } catch (err) {
+    } catch (err: any) {
       if (err.response?.status === 401) handleUnauthorized();
       else toast.error(err.response?.data?.message || "Failed to load counsellors");
     }
@@ -54,7 +62,7 @@ const CounsellorBookingPage = () => {
 
   const fetchMyBooking = async () => {
     try {
-      const res = await axios.get(
+      const res = await axios.get<{ booking: { _id: string; counsellor: Counsellor } }>(
         "http://localhost:5000/api/v1/bookings/my-booking",
         getConfig()
       );
@@ -63,7 +71,7 @@ const CounsellorBookingPage = () => {
         setBookedCounsellorId(res.data.booking.counsellor._id);
         setBookingId(res.data.booking._id);
       }
-    } catch (err) {
+    } catch (err: any) {
       if (err.response?.status === 401) handleUnauthorized();
     }
   };
@@ -88,12 +96,12 @@ const CounsellorBookingPage = () => {
     setIsLoading(true);
 
     try {
-      const res = await axios.post(
+      const res = await axios.post<{ booking: { _id: string } }>(
         "http://localhost:5000/api/v1/bookings/create-booking",
         {
           counsellorId: selectedCounsellor._id,
           start,
-          durationMinutes: Number(duration),
+          durationMinutes: duration,
           notes,
         },
         getConfig()
@@ -111,7 +119,7 @@ const CounsellorBookingPage = () => {
         setDuration(60);
         setNotes("");
       }, 3000);
-    } catch (err) {
+    } catch (err: any) {
       if (err.response?.status === 401) handleUnauthorized();
       else toast.error(err.response?.data?.message || "Booking failed");
     } finally {
@@ -134,19 +142,18 @@ const CounsellorBookingPage = () => {
       toast.success("Booking cancelled successfully");
       setBookedCounsellorId(null);
       setBookingId(null);
-    } catch (err) {
+    } catch (err: any) {
       if (err.response?.status === 401) handleUnauthorized();
       else toast.error(err.response?.data?.message || "Failed to cancel booking");
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString();
   };
 
-  const getDesignationIcon = (designation) => {
+  const getDesignationIcon = (designation: string) => {
     switch (designation) {
       case "Psychologist":
         return <BookOpen className="w-5 h-5" />;
@@ -267,7 +274,7 @@ const CounsellorBookingPage = () => {
           <select
             className="w-full border p-3 rounded mb-4"
             value={duration}
-            onChange={(e) => setDuration(e.target.value)}
+            onChange={(e) => setDuration(Number(e.target.value))}
           >
             <option value={30}>30 min</option>
             <option value={45}>45 min</option>
@@ -297,4 +304,4 @@ const CounsellorBookingPage = () => {
   );
 };
 
-export default CounsellorBookingPage;
+export default StudentBookingPage;
