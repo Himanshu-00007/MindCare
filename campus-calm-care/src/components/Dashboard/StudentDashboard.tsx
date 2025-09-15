@@ -1,6 +1,7 @@
 import React from 'react';
 import StudentHeader from '../StudentHeader';
 import StudentBookingPage from '../booking/StudentBookingPage';
+import StudentMediaDashboard from '../ResourceHub/StudentMediaDashboard';
 
 function StudentDashboard() {
   return (
@@ -8,10 +9,14 @@ function StudentDashboard() {
       {/* Header */}
       <StudentHeader />
 
-      {/* Main content with top padding to avoid overlap */}
-      <div className="pt-24"> {/* Adjust pt-24 depending on header height */}
+      {/* Main content with top padding to prevent overlap with header */}
+      <main className="pt-24 space-y-10">
+        {/* Booking Section */}
         <StudentBookingPage />
-      </div>
+
+        {/* Media Dashboard Section */}
+        <StudentMediaDashboard />
+      </main>
     </div>
   );
 }

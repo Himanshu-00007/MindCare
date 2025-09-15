@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageCircle, Activity, User, CalendarCheck } from "lucide-react";
+import { Menu, X, MessageCircle, Activity, User, CalendarCheck, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
-// Snackbar Component
+// Enhanced Snackbar Component
 const Snackbar = ({
   message,
   type,
@@ -15,21 +15,44 @@ const Snackbar = ({
   type: "success" | "error";
   onClose: () => void;
 }) => (
-  <div
-    className={`fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white transition-all duration-300 ${
+  <motion.div
+    initial={{ opacity: 0, y: 50, scale: 0.9 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    exit={{ opacity: 0, y: 50, scale: 0.9 }}
+    className={`fixed bottom-6 right-6 px-6 py-4 rounded-2xl shadow-2xl text-white ${
       type === "success" ? "bg-green-500" : "bg-red-500"
     }`}
   >
     <div className="flex items-center justify-between space-x-4">
-      <span>{message}</span>
-      <button onClick={onClose} className="text-white font-bold">×</button>
+      <div className="flex items-center space-x-3">
+        {type === "success" ? (
+          <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        ) : (
+          <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+        )}
+        <span className="font-medium">{message}</span>
+      </div>
+      <button
+        onClick={onClose}
+        className="text-white/80 hover:text-white transition-colors duration-200 ml-4 p-1 rounded-full hover:bg-white/10"
+      >
+        <X className="w-4 h-4" />
+      </button>
     </div>
-  </div>
+  </motion.div>
 );
 
 const StudentHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [snackbar, setSnackbar] = useState<{ message: string; type: "success" | "error"; } | null>(null);
+  const [snackbar, setSnackbar] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [studentName, setStudentName] = useState<string>("");
 
   const navigate = useNavigate();
@@ -48,7 +71,6 @@ const StudentHeader = () => {
     showSnackbar("Logged out successfully!", "success");
   };
 
-  // Fetch student name
   useEffect(() => {
     const fetchStudentName = async () => {
       const token = localStorage.getItem("Token");
@@ -65,89 +87,111 @@ const StudentHeader = () => {
     fetchStudentName();
   }, []);
 
+  const menuItems = [
+    { icon: Activity, label: "Home", path: "/student-dashboard" },
+    { icon: MessageCircle, label: "AI Chatbot", path: "/chat" },
+    { icon: CalendarCheck, label: "Self Assessment", path: "/self-assessment" },
+  ];
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-
-          {/* Student Name on Left */}
-          <div
-            className="flex items-center space-x-2 cursor-pointer"
-            onClick={() => navigate("/student-dashboard")}
-          >
-            <div className="flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full border border-gray-300 shadow-sm">
-              <User className="w-5 h-5 text-indigo-600" />
-              <span className="text-gray-800 font-semibold">{studentName || "Student"}</span>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg border-b border-gray-200">
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        {/* User Info */}
+        <motion.div
+          className="flex items-center space-x-4 cursor-pointer"
+          onClick={() => navigate("/student-dashboard")}
+          whileHover={{ scale: 1.02 }}
+        >
+          <div className="relative">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg">
+              <User className="w-6 h-6 text-white" />
             </div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse" />
           </div>
+          <div>
+            <p className="text-sm text-gray-500">Welcome back,</p>
+            <h2 className="text-lg font-semibold text-gray-900">{studentName || "Student"}</h2>
+          </div>
+        </motion.div>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <button className="flex items-center space-x-1 hover:text-indigo-600 transition" onClick={() => navigate("/student-dashboard")}>
-              <Activity className="w-5 h-5" /> <span>Home</span>
-            </button>
-            <button className="flex items-center space-x-1 hover:text-indigo-600 transition" onClick={() => navigate("/chat")}>
-              <MessageCircle className="w-5 h-5" /> <span>AI Chatbot</span>
-            </button>
-            <button className="flex items-center space-x-1 hover:text-indigo-600 transition" onClick={() => navigate("/self-assessment")}>
-              <Activity className="w-5 h-5" /> <span>Self Assessment</span>
-            </button>
-
-            {/* Logout Button */}
-            <Button size="sm" className="ml-4 bg-red-500 hover:bg-red-600 shadow-sm" onClick={handleLogout}>
-              Logout
-            </Button>
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 rounded-md text-gray-700 hover:text-gray-900"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden py-4 border-t border-gray-200 bg-white"
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-8">
+          {menuItems.map((item) => (
+            <Button
+              key={item.path}
+              variant="outline"
+              size="default"
+              className="flex items-center space-x-2"
+              onClick={() => navigate(item.path)}
             >
-              <nav className="flex flex-col space-y-4 px-4">
-                <div className="flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full border border-gray-300 shadow-sm mb-2">
-                  <User className="w-5 h-5 text-indigo-600" />
-                  <span className="text-gray-800 font-semibold">{studentName || "Student"}</span>
-                </div>
+              <item.icon className="w-5 h-5" />
+              <span>{item.label}</span>
+            </Button>
+          ))}
 
-                <button className="flex items-center space-x-2 py-2" onClick={() => { navigate("/"); toggleMenu(); }}>
-                  <Activity className="w-5 h-5" /> <span>Home</span>
-                </button>
-                <button className="flex items-center space-x-2 py-2" onClick={() => { navigate("/chat"); toggleMenu(); }}>
-                  <MessageCircle className="w-5 h-5" /> <span>AI Chatbot</span>
-                </button>
-                <button className="flex items-center space-x-2 py-2" onClick={() => { navigate("/self-assessment"); toggleMenu(); }}>
-                  <Activity className="w-5 h-5" /> <span>Self Assessment</span>
-                </button>
+          <Button
+            variant="destructive"
+            size="default"
+            onClick={handleLogout}
+            className="flex items-center space-x-2"
+          >
+            <X className="w-5 h-5" />
+            <span>Logout</span>
+          </Button>
+        </nav>
 
-                <Button size="sm" className="bg-red-500 hover:bg-red-600 mt-2 shadow-sm" onClick={() => { handleLogout(); toggleMenu(); }}>
-                  Logout
-                </Button>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Mobile Menu Button */}
+        <motion.button
+          className="md:hidden p-3 rounded-lg bg-gray-100 hover:bg-gray-200"
+          onClick={toggleMenu}
+        >
+          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </motion.button>
       </div>
 
+      {/* Mobile Dropdown */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-white shadow-lg border-t border-gray-200"
+          >
+            <div className="flex flex-col space-y-3 p-4">
+              {menuItems.map((item) => (
+                <Button
+                  key={item.path}
+                  variant="ghost"
+                  size="default"
+                  onClick={() => { navigate(item.path); toggleMenu(); }}
+                  className="flex items-center space-x-2 text-gray-700"
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span>{item.label}</span>
+                </Button>
+              ))}
+              <Button
+                variant="destructive"
+                size="default"
+                onClick={() => { handleLogout(); toggleMenu(); }}
+                className="flex items-center space-x-2"
+              >
+                <X className="w-5 h-5" />
+                <span>Logout</span>
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Snackbar */}
-      {snackbar && (
-        <Snackbar message={snackbar.message} type={snackbar.type} onClose={() => setSnackbar(null)} />
-      )}
+      <AnimatePresence>
+        {snackbar && (
+          <Snackbar message={snackbar.message} type={snackbar.type} onClose={() => setSnackbar(null)} />
+        )}
+      </AnimatePresence>
     </header>
   );
 };
