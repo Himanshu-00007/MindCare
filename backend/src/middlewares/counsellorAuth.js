@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Admin from "../models/admin.model.js"
+import Counsellor from "../models/Counsellor.model.js"
 export const verifyJWT=async(req,res,next)=>{
     try{
         const Token=req.cookies?.Token || req.header("Authorization").replace("Bearer ","");
@@ -9,7 +9,7 @@ export const verifyJWT=async(req,res,next)=>{
             })
         }
         const decodedToken=jwt.verify(Token,process.env.TOKEN)
-        const user=await Admin.findById(decodedToken?._id).select("-password -refreshTokens");
+        const user=await Counsellor.findById(decodedToken?._id).select("-password -refreshTokens");
         if(!user){
             return res.status(401).json({
             message:"invalid access token"

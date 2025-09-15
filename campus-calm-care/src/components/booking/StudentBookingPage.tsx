@@ -3,7 +3,6 @@ import axios from "axios";
 import { User, Award, BookOpen, CheckCircle, Sparkles } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import Header from "../Header";
 
 interface Counsellor {
   _id: string;
@@ -156,53 +155,56 @@ const StudentBookingPage: React.FC = () => {
   const getDesignationIcon = (designation: string) => {
     switch (designation) {
       case "Psychologist":
-        return <BookOpen className="w-5 h-5" />;
+        return <BookOpen className="w-5 h-5 text-indigo-500" />;
       case "Psychiatrist":
-        return <Award className="w-5 h-5" />;
+        return <Award className="w-5 h-5 text-yellow-500" />;
       case "Mentor":
-        return <Sparkles className="w-5 h-5" />;
+        return <Sparkles className="w-5 h-5 text-pink-500" />;
       default:
-        return <User className="w-5 h-5" />;
+        return <User className="w-5 h-5 text-gray-500" />;
     }
   };
 
   if (showSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-100 via-green-200 to-green-300">
-        <div className="bg-white shadow-2xl rounded-3xl p-10 text-center max-w-lg">
-          <CheckCircle className="mx-auto w-16 h-16 text-green-500 mb-6" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-green-100 via-green-200 to-green-300 animate-fadeIn px-4 sm:px-6 lg:px-8">
+        <div className="bg-white shadow-2xl rounded-3xl p-10 text-center max-w-lg transform scale-105">
+          <CheckCircle className="mx-auto w-16 h-16 text-green-500 mb-6 animate-bounce" />
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Booking Confirmed!</h2>
           <p className="text-gray-600 mb-4">
             Your session with <span className="font-semibold">{selectedCounsellor?.name}</span> is scheduled.
           </p>
           <p className="text-gray-500 mb-6">📅 {formatDate(start)}</p>
 
-          <button
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
-            onClick={() => navigate("/student-booking")}
-          >
-            View My Bookings
-          </button>
+          <div className="flex justify-center gap-4">
+            <button
+              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition shadow-md"
+              onClick={() => navigate("/student-booking")}
+            >
+              View My Bookings
+            </button>
 
-          <button
-            className="ml-4 bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition"
-            onClick={cancelBooking}
-          >
-            Cancel Booking
-          </button>
+            <button
+              className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition shadow-md"
+              onClick={cancelBooking}
+            >
+              Cancel Booking
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <Header />
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
 
       {!selectedCounsellor ? (
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8">Choose a Counsellor</h1>
+          <h1 className="text-3xl font-bold text-center mb-8 text-indigo-700">
+            Choose a Counsellor
+          </h1>
 
           {counsellors.length === 0 ? (
             <p className="text-center text-gray-500">Loading counsellors...</p>
@@ -213,36 +215,38 @@ const StudentBookingPage: React.FC = () => {
                   key={c._id}
                   className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-300 border border-gray-200"
                 >
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        {getDesignationIcon(c.designation)}
-                        <span className="font-semibold text-indigo-600">{c.designation}</span>
+                  <div className="p-6 flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          {getDesignationIcon(c.designation)}
+                          <span className="font-semibold text-indigo-600">{c.designation}</span>
+                        </div>
                       </div>
-                    </div>
 
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{c.name}</h3>
-                    <p className="text-gray-600 mb-4 truncate">{c.email}</p>
+                      <h3 className="text-xl font-semibold text-gray-800 mb-2">{c.name}</h3>
+                      <p className="text-gray-600 mb-4 truncate">{c.email}</p>
 
-                    <div className="bg-indigo-50 rounded-lg p-3 mb-6">
-                      <div className="flex items-center gap-2">
-                        <Award className="w-5 h-5 text-indigo-500" />
-                        <span className="text-gray-700 text-sm">
-                          {c.experience || "Experience not specified"}
-                        </span>
+                      <div className="bg-indigo-50 rounded-lg p-3 mb-6">
+                        <div className="flex items-center gap-2">
+                          <Award className="w-5 h-5 text-indigo-500" />
+                          <span className="text-gray-700 text-sm">
+                            {c.experience || "Experience not specified"}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
                     {bookedCounsellorId === c._id ? (
                       <button
-                        className="w-full bg-red-500 text-white py-2 rounded-lg"
+                        className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition shadow-md"
                         onClick={cancelBooking}
                       >
                         Cancel Session
                       </button>
                     ) : (
                       <button
-                        className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+                        className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white py-2 rounded-lg hover:from-indigo-700 hover:to-indigo-600 transition shadow-md"
                         onClick={() => setSelectedCounsellor(c)}
                       >
                         Book Session
@@ -255,24 +259,26 @@ const StudentBookingPage: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-          <button className="text-blue-600 mb-6" onClick={() => setSelectedCounsellor(null)}>
+        <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-lg animate-fadeIn">
+          <button className="text-blue-600 mb-6 hover:underline" onClick={() => setSelectedCounsellor(null)}>
             ← Back to list
           </button>
 
-          <h2 className="text-2xl font-bold mb-4">Schedule Session with {selectedCounsellor.name}</h2>
+          <h2 className="text-2xl font-bold mb-4 text-indigo-700">
+            Schedule Session with {selectedCounsellor.name}
+          </h2>
 
           <label className="block mb-2 font-medium">Select Date & Time</label>
           <input
             type="datetime-local"
-            className="w-full border p-3 rounded mb-4"
+            className="w-full border p-3 rounded mb-4 focus:ring-2 focus:ring-indigo-400 outline-none"
             value={start}
             onChange={(e) => setStart(e.target.value)}
           />
 
           <label className="block mb-2 font-medium">Duration (minutes)</label>
           <select
-            className="w-full border p-3 rounded mb-4"
+            className="w-full border p-3 rounded mb-4 focus:ring-2 focus:ring-indigo-400 outline-none"
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
           >
@@ -284,7 +290,7 @@ const StudentBookingPage: React.FC = () => {
 
           <label className="block mb-2 font-medium">Additional Notes</label>
           <textarea
-            className="w-full border p-3 rounded mb-4"
+            className="w-full border p-3 rounded mb-4 focus:ring-2 focus:ring-indigo-400 outline-none"
             rows={4}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -292,7 +298,7 @@ const StudentBookingPage: React.FC = () => {
           />
 
           <button
-            className="w-full bg-indigo-600 text-white px-4 py-3 rounded hover:bg-indigo-700 disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-4 py-3 rounded-lg hover:from-indigo-700 hover:to-indigo-600 transition shadow-md disabled:opacity-50"
             onClick={createBooking}
             disabled={isLoading}
           >

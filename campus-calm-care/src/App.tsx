@@ -12,10 +12,11 @@ import NotFound from "./pages/NotFound";
 
 
 import StudentBookingPage from "./components/booking/StudentBookingPage"
-import CounsellorBookingPage from "./components/booking/CounsellorBookingPage";
+import CounsellorDashboardPage from "./components/booking/CounsellorDashboardPage";
 import StudentChatPage from "./components/chat/StudentChatPage";
 import AuthPage from "./components/Authentication/AuthPage";
 import VideoDashboard from "./components/ResourceHub/VideoDashboard";
+import StudentHeader from "./components/Dashboard/StudentDashboard";
 
 
 // Initialize react-query
@@ -28,8 +29,9 @@ const router = createBrowserRouter(
     { path: "/auth", element: <AuthPage /> },
     { path: "/chat", element: <StudentChatPage /> },
     {path: "/student-booking", element: <StudentBookingPage/>},
-    {path: "/counsellor-booking", element: <CounsellorBookingPage />},
+    {path: "/counsellor-booking", element: <CounsellorDashboardPage />},
     {path: "/video-dashboard", element: <VideoDashboard />},
+    {path: "/student-dashboard", element: <StudentHeader />},
 
     { path: "*", element: <NotFound /> },
     

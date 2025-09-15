@@ -131,4 +131,24 @@ const studentLogout = async (req, res) => {
     return res.status(400).json({ message: "error in logging out" });
   }
 };
-export {studentRegister,studentLogin,generateTokenAndRefreshToken,studentLogout}
+
+ const getMyProfile = async (req, res) => {
+  try {
+    const studentId = req.user._id; // JWT middleware se aayega
+    if (!studentId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const student = await Student.findById(studentId).select("name email");
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.status(200).json({ name: student.name, email: student.email });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export {studentRegister,studentLogin,generateTokenAndRefreshToken,studentLogout,getMyProfile}
