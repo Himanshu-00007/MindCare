@@ -150,5 +150,30 @@ const studentLogout = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const updateSelfAssessment = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const { PHQ9, GAD7, GHQ } = req.body;
 
-export {studentRegister,studentLogin,generateTokenAndRefreshToken,studentLogout,getMyProfile}
+    const updatedStudent = await Student.findByIdAndUpdate(
+      studentId,
+      { 
+        "mental_health_score.PHQ9": PHQ9,
+        "mental_health_score.GAD7": GAD7,
+        "mental_health_score.GHQ": GHQ
+      },
+      { new: true } // return the updated document
+    );
+
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    return res.status(200).json({ message: "Self assessment updated successfully", student: updatedStudent });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+
+export {studentRegister,studentLogin,generateTokenAndRefreshToken,studentLogout,getMyProfile,updateSelfAssessment}

@@ -112,7 +112,7 @@ const AuthPage: React.FC = () => {
 
     // ✅ store token + role + userId
     localStorage.setItem("Token", res.data.Token);
-    localStorage.setItem("id", res.data._id);
+    localStorage.setItem("id", res.data.loggedInUser._id);
     localStorage.setItem("role", role);
     
 

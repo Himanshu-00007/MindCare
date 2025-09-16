@@ -18,6 +18,7 @@ import AuthPage from "./components/Authentication/AuthPage";
 import MediaDashboard from "./components/ResourceHub/MediaDashboard";
 import StudentHeader from "./components/Dashboard/StudentDashboard";
 import StudentMediaDashboard from "./components/ResourceHub/StudentMediaDashboard";
+import SelfAssessmentForm from "./components/SelfAssessment/SelfAssessmentForm";
 
 
 // Initialize react-query
@@ -34,6 +35,7 @@ const router = createBrowserRouter(
     {path: "/media-dashboard", element: <MediaDashboard />},
     {path: "/student-dashboard", element: <StudentHeader />},
     {path: "/student-media", element: <StudentMediaDashboard />},
+    {path: "/self-assessment", element: <SelfAssessmentForm />},
 
     { path: "*", element: <NotFound /> },
     
