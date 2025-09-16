@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/studentAuth.js";
 import { verifyJWT as adminAuth } from "../middlewares/adminAuth.js";
-import { deleteVideo, dislikeVideo, getAllVideos, getUserVideos, likeVideo, updateVideo, uploadVideo } from "../controllers/video.controllers.js";
+import { deleteVideo, dislikeVideo, getAllVideos, getUserVideos, likeVideo, updateVideo, uploadVideo, view } from "../controllers/video.controllers.js";
 import { upload } from "../middlewares/multer.js";
 const router=Router();
 router.route("/video-upload")
@@ -14,5 +14,6 @@ router.route("/like-video/:id").patch(verifyJWT,likeVideo);
 router.route("/dislike-video/:id").patch(verifyJWT,dislikeVideo);
 router.route("/get-user-videos").get(getUserVideos);
 router.route("/get-all-videos").get(getAllVideos);
+router.route("/view/:id").patch(verifyJWT,view);
 
 export default router;

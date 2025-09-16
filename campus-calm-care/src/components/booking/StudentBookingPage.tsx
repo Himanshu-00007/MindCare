@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { User, Award, BookOpen, CheckCircle, Sparkles, Calendar, Clock, MessageSquare, ArrowLeft, Star, Heart, Brain, Users } from "lucide-react";
+import {
+  User,
+  Award,
+  BookOpen,
+  CheckCircle,
+  Sparkles,
+  Calendar,
+  Clock,
+  MessageSquare,
+  ArrowLeft,
+  Star,
+  Heart,
+  Brain,
+  Users,
+} from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -165,199 +179,146 @@ const StudentBookingPage: React.FC = () => {
     }
   };
 
-  const getDesignationColor = (designation: string) => {
-    switch (designation) {
-      case "Psychologist":
-        return "from-purple-500 to-purple-600";
-      case "Psychiatrist":
-        return "from-rose-500 to-rose-600";
-      case "Mentor":
-        return "from-yellow-500 to-yellow-600";
-      default:
-        return "from-blue-500 to-blue-600";
-    }
-  };
-
-  const getDesignationBg = (designation: string) => {
-    switch (designation) {
-      case "Psychologist":
-        return "bg-purple-50 border-purple-200";
-      case "Psychiatrist":
-        return "bg-rose-50 border-rose-200";
-      case "Mentor":
-        return "bg-yellow-50 border-yellow-200";
-      default:
-        return "bg-blue-50 border-blue-200";
-    }
-  };
-
-  if (showSuccess) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-100/20 via-teal-100/20 to-cyan-100/20"></div>
-        <div className="relative bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl p-12 text-center max-w-lg transform animate-pulse border border-emerald-200/50">
-          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
-            <div className="bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full p-4 shadow-lg">
-              <CheckCircle className="w-12 h-12 text-white animate-bounce" />
-            </div>
-          </div>
-          
-          <div className="mt-8">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent mb-4">
-              Booking Confirmed!
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-emerald-400 to-teal-500 mx-auto mb-6 rounded-full"></div>
-            <p className="text-gray-700 mb-4 text-lg">
-              Your session with <span className="font-bold text-emerald-600">{selectedCounsellor?.name}</span> is scheduled.
-            </p>
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4 mb-8 border border-emerald-200">
-              <p className="text-emerald-700 font-semibold flex items-center justify-center gap-2">
-                <Calendar className="w-5 h-5" />
-                {formatDate(start)}
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button
-                className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-3 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all transform hover:scale-105 shadow-lg font-medium"
-                onClick={() => navigate("/student-booking")}
-              >
-                View My Bookings
-              </button>
-
-              <button
-                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 rounded-xl hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-105 shadow-lg font-medium"
-                onClick={cancelBooking}
-              >
-                Cancel Booking
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 px-4 sm:px-6 lg:px-8">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-indigo-100/20 to-purple-100/30 pointer-events-none"></div>
+    <div className="min-h-screen relative flex flex-col items-center p-6 overflow-hidden bg-gradient-to-br from-teal-100 via-lavender-100 to-blue-100">
+      {/* Floating ambient orbs */}
+      <div className="fixed top-20 left-20 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob"></div>
+      <div className="fixed top-40 right-20 w-72 h-72 bg-lavender-300 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob animation-delay-2000"></div>
+      <div className="fixed bottom-20 left-40 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob animation-delay-4000"></div>
+
       <Toaster position="top-right" />
 
       {!selectedCounsellor ? (
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-7xl w-full mx-auto mt-12">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-teal-400 via-lavender-400 to-blue-400 bg-clip-text text-transparent mb-4">
               Find Your Perfect Counsellor
             </h1>
-            <div className="w-32 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto mb-6 rounded-full"></div>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <div className="w-32 h-1 bg-gradient-to-r from-teal-300 via-lavender-300 to-blue-300 mx-auto mb-6 rounded-full"></div>
+            <p className="text-gray-700 max-w-2xl mx-auto text-lg">
               Connect with experienced professionals who are here to support your mental health journey
             </p>
           </div>
 
           {counsellors.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mb-4"></div>
-              <p className="text-xl text-gray-500">Discovering amazing counsellors for you...</p>
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-teal-400 mb-4"></div>
+              <p className="text-gray-600 text-lg">Discovering amazing counsellors for you...</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {counsellors.map((c) => (
-                <div
-                  key={c._id}
-                  className="group bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-500 border border-gray-200/50 hover:border-indigo-200"
-                >
-                  <div className="relative">
-                    <div className={`h-2 bg-gradient-to-r ${getDesignationColor(c.designation)}`}></div>
-                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className={`bg-gradient-to-r ${getDesignationColor(c.designation)} rounded-full p-2`}>
-                        {getDesignationIcon(c.designation)}
+              {counsellors.map((c) => {
+                let designationGradient = "";
+                let designationBg = "";
+                switch (c.designation) {
+                  case "Psychologist":
+                    designationGradient = "from-purple-200 to-purple-400";
+                    designationBg = "bg-purple-100/30 border-purple-200/50";
+                    break;
+                  case "Counsellor":
+                    designationGradient = "from-indigo-200 to-blue-300";
+                    designationBg = "bg-indigo-100/30 border-indigo-200/50";
+                    break;
+                  default:
+                    designationGradient = "from-teal-200 to-cyan-300";
+                    designationBg = "bg-teal-100/30 border-teal-200/50";
+                }
+
+                return (
+                  <div
+                    key={c._id}
+                    className="group bg-white/20 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all duration-500 border border-white/20"
+                  >
+                    <div className="relative">
+                      <div className={`h-2 bg-gradient-to-r ${designationGradient}`}></div>
+                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className={`rounded-full p-2 bg-gradient-to-r ${designationGradient}`}>
+                          {getDesignationIcon(c.designation)}
+                        </div>
                       </div>
+                    </div>
+
+                    <div className="p-6">
+                      <div className={`flex items-center gap-3 px-4 py-2 rounded-full border ${designationBg} mb-4`}>
+                        {getDesignationIcon(c.designation)}
+                        <span className="font-bold text-gray-800">{c.designation}</span>
+                      </div>
+
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-teal-700 transition-colors">
+                        {c.name}
+                      </h3>
+                      <p className="text-gray-700 mb-4 text-sm">{c.email}</p>
+
+                      <div className="bg-white/10 rounded-2xl p-4 mb-6 border border-white/20">
+                        <div className="flex items-center gap-3">
+                          <Award className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                          <span className="text-gray-700 font-medium">
+                            {c.experience || "Experience details available in consultation"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {bookedCounsellorId === c._id ? (
+                        <button
+                          className="w-full bg-gradient-to-r from-red-300 to-red-400 text-white py-3 rounded-2xl hover:from-red-400 hover:to-red-500 transition-all transform hover:scale-105 shadow-md font-bold text-lg"
+                          onClick={cancelBooking}
+                        >
+                          Cancel Session
+                        </button>
+                      ) : (
+                        <button
+                          className="w-full bg-gradient-to-r from-teal-300 via-lavender-300 to-blue-300 text-gray-900 py-3 rounded-2xl hover:from-teal-400 hover:via-lavender-400 hover:to-blue-400 transition-all transform hover:scale-105 shadow-md font-bold text-lg"
+                          onClick={() => setSelectedCounsellor(c)}
+                        >
+                          Book Session
+                        </button>
+                      )}
                     </div>
                   </div>
-                  
-                  <div className="p-8">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className={`flex items-center gap-3 px-4 py-2 rounded-full border ${getDesignationBg(c.designation)}`}>
-                        {getDesignationIcon(c.designation)}
-                        <span className="font-bold text-gray-700">{c.designation}</span>
-                      </div>
-                    </div>
-
-                    <h3 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-indigo-600 transition-colors">
-                      {c.name}
-                    </h3>
-                    <p className="text-gray-500 mb-6 text-sm">{c.email}</p>
-
-                    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-4 mb-8 border border-indigo-100">
-                      <div className="flex items-center gap-3">
-                        <Award className="w-5 h-5 text-indigo-500 flex-shrink-0" />
-                        <span className="text-gray-700 font-medium">
-                          {c.experience || "Experience details available in consultation"}
-                        </span>
-                      </div>
-                    </div>
-
-                    {bookedCounsellorId === c._id ? (
-                      <button
-                        className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-4 rounded-2xl hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-105 shadow-lg font-bold text-lg group-hover:shadow-xl"
-                        onClick={cancelBooking}
-                      >
-                        Cancel Session
-                      </button>
-                    ) : (
-                      <button
-                        className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white py-4 rounded-2xl hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg font-bold text-lg group-hover:shadow-xl"
-                        onClick={() => setSelectedCounsellor(c)}
-                      >
-                        Book Session
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
       ) : (
-        <div className="relative max-w-3xl mx-auto">
-          <div className="bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-gray-200/50">
-            <button 
-              className="flex items-center gap-2 text-indigo-600 mb-8 hover:text-indigo-700 transition-colors font-medium text-lg group" 
+        <div className="relative max-w-3xl w-full mx-auto mt-12">
+          <div className="bg-white/20 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
+            <button
+              className="flex items-center gap-2 text-teal-600 mb-6 hover:text-teal-800 transition-colors font-medium text-lg group"
               onClick={() => setSelectedCounsellor(null)}
             >
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
               Back to counsellors
             </button>
 
-            <div className="text-center mb-10">
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            <div className="text-center mb-8">
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-teal-400 via-lavender-400 to-blue-400 bg-clip-text text-transparent mb-3">
                 Schedule with {selectedCounsellor.name}
               </h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
+              <div className="w-24 h-1 bg-gradient-to-r from-teal-300 via-lavender-300 to-blue-300 mx-auto rounded-full"></div>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div>
-                <label className="flex items-center gap-2 text-lg font-bold text-gray-700 mb-4">
-                  <Calendar className="w-5 h-5 text-indigo-500" />
+                <label className="flex items-center gap-2 text-lg font-bold text-gray-800 mb-2">
+                  <Calendar className="w-5 h-5 text-teal-400" />
                   Select Date & Time
                 </label>
                 <input
                   type="datetime-local"
-                  className="w-full border-2 border-gray-200 p-4 rounded-2xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition-all text-lg bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-white/20 p-3 rounded-2xl focus:ring-4 focus:ring-teal-200 focus:border-teal-400 outline-none transition-all text-lg bg-white/20 hover:bg-white/30 text-gray-900"
                   value={start}
                   onChange={(e) => setStart(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-lg font-bold text-gray-700 mb-4">
-                  <Clock className="w-5 h-5 text-indigo-500" />
+                <label className="flex items-center gap-2 text-lg font-bold text-gray-800 mb-2">
+                  <Clock className="w-5 h-5 text-teal-400" />
                   Session Duration
                 </label>
                 <select
-                  className="w-full border-2 border-gray-200 p-4 rounded-2xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition-all text-lg bg-gray-50 hover:bg-white"
+                  className="w-full border-2 border-white/20 p-3 rounded-2xl focus:ring-4 focus:ring-teal-200 focus:border-teal-400 outline-none transition-all text-lg bg-white/20 hover:bg-white/30 text-gray-900"
                   value={duration}
                   onChange={(e) => setDuration(Number(e.target.value))}
                 >
@@ -369,12 +330,12 @@ const StudentBookingPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="flex items-center gap-2 text-lg font-bold text-gray-700 mb-4">
-                  <MessageSquare className="w-5 h-5 text-indigo-500" />
+                <label className="flex items-center gap-2 text-lg font-bold text-gray-800 mb-2">
+                  <MessageSquare className="w-5 h-5 text-teal-400" />
                   Additional Notes
                 </label>
                 <textarea
-                  className="w-full border-2 border-gray-200 p-4 rounded-2xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition-all text-lg bg-gray-50 hover:bg-white resize-none"
+                  className="w-full border-2 border-white/20 p-3 rounded-2xl focus:ring-4 focus:ring-teal-200 focus:border-teal-400 outline-none transition-all text-lg bg-white/20 hover:bg-white/30 text-gray-900 resize-none"
                   rows={5}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
@@ -383,13 +344,13 @@ const StudentBookingPage: React.FC = () => {
               </div>
 
               <button
-                className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white px-8 py-5 rounded-2xl hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 shadow-xl font-bold text-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full bg-gradient-to-r from-teal-300 via-lavender-300 to-blue-300 text-gray-900 px-6 py-4 rounded-2xl hover:from-teal-400 hover:via-lavender-400 hover:to-blue-400 transition-all transform hover:scale-105 shadow-md font-bold text-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={createBooking}
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-3">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
                     Confirming your session...
                   </span>
                 ) : (
