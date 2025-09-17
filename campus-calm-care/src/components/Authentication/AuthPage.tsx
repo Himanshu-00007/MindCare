@@ -35,317 +35,162 @@ const Snackbar = ({
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // UI states
   const [tab, setTab] = useState<"login" | "register">("login");
-  const [role, setRole] = useState<"student" | "counsellor" | "admin">(
-    "student"
-  );
+  const [role, setRole] = useState<"student" | "counsellor" | "admin">("student");
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     message: string;
     type: "success" | "error";
   } | null>(null);
 
-  // Form states
   const [studentData, setStudentData] = useState({
-    name: "",
-    email: "",
-    mobile_number: "",
-    password: "",
-    age: "",
-    gender: "",
-    course: "",
-    institution: "",
+    name: "", email: "", mobile_number: "", password: "", age: "", gender: "", course: "", institution: ""
   });
 
   const [counsellorData, setCounsellorData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    designation: "",
-    experience:"",
+    name: "", email: "", password: "", designation: "", experience: "", institution: ""
   });
 
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
 
-  // Snackbar function
   const showSnackbar = (message: string, type: "success" | "error") => {
     setSnackbar({ message, type });
     setTimeout(() => setSnackbar(null), 3000);
   };
 
-  // Handle input change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     type: "student" | "counsellor" | "login"
   ) => {
     const { name, value } = e.target;
-    if (type === "student") {
-      setStudentData((prev) => ({ ...prev, [name]: value }));
-    } else if (type === "counsellor") {
-      setCounsellorData((prev) => ({ ...prev, [name]: value }));
-    } else {
-      setLoginData((prev) => ({ ...prev, [name]: value }));
-    }
+    if (type === "student") setStudentData((prev) => ({ ...prev, [name]: value }));
+    else if (type === "counsellor") setCounsellorData((prev) => ({ ...prev, [name]: value }));
+    else setLoginData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRoleChange = (selectedRole: "student" | "counsellor" | "admin") => {
+    setRole(selectedRole);
+    if (selectedRole === "admin") setTab("login");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    let url = "";
-    let payload: any = {};
+    try {
+      if (tab === "register") {
+        // Registration
+        const url = `http://localhost:5000/api/v1/${role}s/${role}-register`;
+        const payload = role === "student" ? studentData : counsellorData;
+        await axios.post(url, payload, { withCredentials: true });
 
-    if (tab === "login") {
-      url = `http://localhost:5000/api/v1/${role}s/${role}-login`;
-      payload = loginData;
-    } else {
-      url = `http://localhost:5000/api/v1/${role}s/${role}-register`;
-      payload = role === "student" ? studentData : counsellorData;
+        // Auto-login after registration
+        const loginUrl = `http://localhost:5000/api/v1/${role}s/${role}-login`;
+        const loginPayload = { email: payload.email, password: payload.password };
+        const res = await axios.post(loginUrl, loginPayload, { withCredentials: true });
+
+        localStorage.setItem("Token", res.data.Token);
+        localStorage.setItem("id", res.data.User._id);
+        localStorage.setItem("role", role);
+
+        showSnackbar(`${role} registered and logged in successfully!`, "success");
+
+        setTimeout(() => {
+          if (role === "student") navigate("/student-dashboard");
+          else if (role === "counsellor") navigate("/counsellor-booking");
+          else if (role === "admin") navigate("/video-dashboard");
+        }, 1000);
+      } else {
+        // Normal login
+        const url = `http://localhost:5000/api/v1/${role}s/${role}-login`;
+        const res = await axios.post(url, loginData, { withCredentials: true });
+
+        localStorage.setItem("Token", res.data.Token);
+        localStorage.setItem("id", res.data.User._id);
+        localStorage.setItem("role", role);
+
+        showSnackbar(`${role} logged in successfully!`, "success");
+
+        setTimeout(() => {
+          if (role === "student") navigate("/student-dashboard");
+          else if (role === "counsellor") navigate("/counsellor-booking");
+          else if (role === "admin") navigate("/video-dashboard");
+        }, 1000);
+      }
+    } catch (err: any) {
+      showSnackbar(err.response?.data?.message || err.message || "Something went wrong", "error");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const res = await axios.post(url, payload, { withCredentials: true });
-
-    // ✅ store token + role + userId
-    localStorage.setItem("Token", res.data.Token);
-    localStorage.setItem("id", res.data.loggedInUser._id);
-    localStorage.setItem("role", role);
-    
-
-    showSnackbar(
-      tab === "login"
-        ? `${role} logged in successfully!`
-        : `${role} registered successfully!`,
-      "success"
-    );
-
-    // ✅ Navigate role-wise
-    setTimeout(() => {
-      if (role === "student") navigate("/");
-      if (role === "counsellor") navigate("/counsellor/dashboard");
-      if (role === "admin") navigate("/");
-    }, 1500);
-  } catch (err: any) {
-    showSnackbar(
-      err.response?.data?.message || err.message || "Something went wrong",
-      "error"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 flex items-center justify-center px-4">
       <Card className="w-full max-w-md shadow-xl bg-white/90 backdrop-blur-lg rounded-2xl">
         <CardContent className="p-8">
-          <h1 className="text-3xl font-bold text-center text-indigo-600 mb-4">
-            MindCare Auth
-          </h1>
-
-          {/* Tabs */}
-          <Tabs
-            defaultValue="login"
-            onValueChange={(v: any) => setTab(v)}
-            className="mt-4"
-          >
+          <h1 className="text-3xl font-bold text-center text-indigo-600 mb-4">MindCare Auth</h1>
+          <Tabs value={tab} onValueChange={(v: any) => setTab(v)} className="mt-4">
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="register" disabled={role === "admin"}>Register</TabsTrigger>
             </TabsList>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4 mt-6">
-              {/* Student Register */}
               {tab === "register" && role === "student" && (
                 <>
-                  <Input
-                    type="text"
-                    name="name"
-                    placeholder="Full Name"
-                    value={studentData.name}
-                    onChange={(e) => handleChange(e, "student")}
-                    required
-                  />
-                  <Input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={studentData.email}
-                    onChange={(e) => handleChange(e, "student")}
-                    required
-                  />
-                  <Input
-                    type="text"
-                    name="mobile_number"
-                    placeholder="Mobile Number"
-                    value={studentData.mobile_number}
-                    onChange={(e) => handleChange(e, "student")}
-                    required
-                  />
-                  <Input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={studentData.password}
-                    onChange={(e) => handleChange(e, "student")}
-                    required
-                  />
-                  <Input
-                    type="number"
-                    name="age"
-                    placeholder="Age"
-                    value={studentData.age}
-                    onChange={(e) => handleChange(e, "student")}
-                  />
-                  <Input
-                    type="text"
-                    name="gender"
-                    placeholder="Gender"
-                    value={studentData.gender}
-                    onChange={(e) => handleChange(e, "student")}
-                  />
-                  <Input
-                    type="text"
-                    name="course"
-                    placeholder="Course"
-                    value={studentData.course}
-                    onChange={(e) => handleChange(e, "student")}
-                  />
-                  <Input
-                    type="text"
-                    name="institution"
-                    placeholder="Institution"
-                    value={studentData.institution}
-                    onChange={(e) => handleChange(e, "student")}
-                  />
+                  <Input type="text" name="name" placeholder="Full Name" value={studentData.name} onChange={(e) => handleChange(e, "student")} required />
+                  <Input type="email" name="email" placeholder="Email" value={studentData.email} onChange={(e) => handleChange(e, "student")} required />
+                  <Input type="text" name="mobile_number" placeholder="Mobile Number" value={studentData.mobile_number} onChange={(e) => handleChange(e, "student")} required />
+                  <Input type="password" name="password" placeholder="Password" value={studentData.password} onChange={(e) => handleChange(e, "student")} required />
+                  <Input type="number" name="age" placeholder="Age" value={studentData.age} onChange={(e) => handleChange(e, "student")} />
+                  <Input type="text" name="gender" placeholder="Gender" value={studentData.gender} onChange={(e) => handleChange(e, "student")} />
+                  <Input type="text" name="course" placeholder="Course" value={studentData.course} onChange={(e) => handleChange(e, "student")} />
+                  <Input type="text" name="institution" placeholder="Institution" value={studentData.institution} onChange={(e) => handleChange(e, "student")} />
                 </>
               )}
 
-              {/* Counsellor Register */}
               {tab === "register" && role === "counsellor" && (
                 <>
-                  <Input
-                    type="text"
-                    name="name"
-                    placeholder="Full Name"
-                    value={counsellorData.name}
-                    onChange={(e) => handleChange(e, "counsellor")}
-                    required
-                  />
-                  <Input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={counsellorData.email}
-                    onChange={(e) => handleChange(e, "counsellor")}
-                    required
-                  />
-                  <Input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={counsellorData.password}
-                    onChange={(e) => handleChange(e, "counsellor")}
-                    required
-                  />
-                  <Input
-                    type="text"
-                    name="designation"
-                    placeholder="Designation"
-                    value={counsellorData.designation}
-                    onChange={(e) => handleChange(e, "counsellor")}
-                  />
-                  <Input
-                    type="text"
-                    name="experience"
-                    placeholder="experience"
-                    value={counsellorData.experience}
-                    onChange={(e) => handleChange(e, "counsellor")}
-                  />
+                  <Input type="text" name="name" placeholder="Full Name" value={counsellorData.name} onChange={(e) => handleChange(e, "counsellor")} required />
+                  <Input type="email" name="email" placeholder="Email" value={counsellorData.email} onChange={(e) => handleChange(e, "counsellor")} required />
+                  <Input type="password" name="password" placeholder="Password" value={counsellorData.password} onChange={(e) => handleChange(e, "counsellor")} required />
+                  <Input type="text" name="designation" placeholder="Designation" value={counsellorData.designation} onChange={(e) => handleChange(e, "counsellor")} />
+                  <Input type="text" name="experience" placeholder="Experience" value={counsellorData.experience} onChange={(e) => handleChange(e, "counsellor")} />
+                  <Input type="text" name="institution" placeholder="Institution" value={counsellorData.institution} onChange={(e) => handleChange(e, "counsellor")} />
                 </>
               )}
 
-              {/* Login */}
               {tab === "login" && (
                 <>
-                  <Input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={loginData.email}
-                    onChange={(e) => handleChange(e, "login")}
-                    required
-                  />
-                  <Input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={loginData.password}
-                    onChange={(e) => handleChange(e, "login")}
-                    required
-                  />
+                  <Input type="email" name="email" placeholder="Email" value={loginData.email} onChange={(e) => handleChange(e, "login")} required />
+                  <Input type="password" name="password" placeholder="Password" value={loginData.password} onChange={(e) => handleChange(e, "login")} required />
                 </>
               )}
 
-              {/* Role Selection */}
               <div className="flex justify-between text-sm text-gray-600 mt-3">
                 <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    value="student"
-                    checked={role === "student"}
-                    onChange={(e) => setRole(e.target.value as any)}
-                  />
+                  <input type="radio" value="student" checked={role === "student"} onChange={() => handleRoleChange("student")} />
                   <span>Student</span>
                 </label>
                 <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    value="counsellor"
-                    checked={role === "counsellor"}
-                    onChange={(e) => setRole(e.target.value as any)}
-                  />
+                  <input type="radio" value="counsellor" checked={role === "counsellor"} onChange={() => handleRoleChange("counsellor")} />
                   <span>Counsellor</span>
                 </label>
                 <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    value="admin"
-                    checked={role === "admin"}
-                    onChange={(e) => setRole(e.target.value as any)}
-                  />
+                  <input type="radio" value="admin" checked={role === "admin"} onChange={() => handleRoleChange("admin")} />
                   <span>Admin</span>
                 </label>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full mt-4"
-                disabled={loading}
-              >
-                {loading
-                  ? "Please wait..."
-                  : tab === "login"
-                  ? "Login"
-                  : "Register"}
+              <Button type="submit" className="w-full mt-4" disabled={loading}>
+                {loading ? "Please wait..." : tab === "login" ? "Login" : "Register"}
               </Button>
             </form>
           </Tabs>
         </CardContent>
       </Card>
 
-      {/* Snackbar */}
-      {snackbar && (
-        <Snackbar
-          message={snackbar.message}
-          type={snackbar.type}
-          onClose={() => setSnackbar(null)}
-        />
-      )}
+      {snackbar && <Snackbar message={snackbar.message} type={snackbar.type} onClose={() => setSnackbar(null)} />}
     </div>
   );
 };

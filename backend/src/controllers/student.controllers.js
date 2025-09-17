@@ -64,12 +64,12 @@ const studentRegister = async (req, res) => {
         course,
         
     })
-    const createdUser=await Student.findById(student._id).select("-password -refreshToken");
-    if(!createdUser){
+    const User=await Student.findById(student._id).select("-password -refreshToken");
+    if(!User){
         return res.status(400).json({ message: "something went wrong while registering student" });
     }
     return res.status(200).json({
-        createdUser,
+        User,
         message:"student created successfully"
     })
   } catch (error) {
@@ -92,13 +92,13 @@ const studentLogin=async(req,res)=>{
     const isPasswordValid = await user.isPasswordCorrect(password);
     if (!isPasswordValid) return res.status(400).json({ message: "invalid password" });
     const {Token,refreshToken}=await generateTokenAndRefreshToken(user._id);
-    const loggedInUser=await Student.findById(user._id).select("-password -refreshToken");
+    const User=await Student.findById(user._id).select("-password -refreshToken");
     const options={httpOnly:true,secure:true};
     return  res.status(200)
     .cookie("Token",Token,options)
     .cookie("refreshToken",refreshToken,options)
     .json({
-      loggedInUser,
+      User,
       message:"user loggedIn successfully",
       Token,
       refreshToken

@@ -1,26 +1,19 @@
 import jwt from "jsonwebtoken";
-import Student from "../models/student.model.js"
-export const verifyJWT=async(req,res,next)=>{
-    try{
-        const Token=req.cookies?.Token || req.header("Authorization").replace("Bearer ","");
-        if(!Token){
-            return res.status(400).json({
-            message:"unauthorized token"
-            })
-        }
-        const decodedToken=jwt.verify(Token,process.env.TOKEN)
-        const user=await Student.findById(decodedToken?._id).select("-password -refreshTokens");
-        if(!user){
-            return res.status(401).json({
-            message:"invalid access token"
-            })
-        }
-        req.user=user;
-        next();
-    }
-    catch(error){
-        return res.status(400).json({
-            message:"something went wrong in auth middleware or Invalid access token"
-        })
-    }
-}
+import Student from "../models/student.model.js";
+
+export const verifyJWT = async (req, res, next) => {
+  try {
+    const token = req.cookies?.Token || req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) return res.status(401).json({ message: "Unauthorized token" });
+
+    const decoded = jwt.verify(token, process.env.TOKEN);
+    const user = await Student.findById(decoded._id).select("-password -refreshToken");
+    if (!user) return res.status(401).json({ message: "Invalid access token" });
+
+    req.user = { ...user.toObject(), role: "student" };
+    next();
+  } catch (err) {
+    console.error("Student JWT error:", err);
+    return res.status(401).json({ message: "Something went wrong in auth middleware or invalid access token" });
+  }
+};

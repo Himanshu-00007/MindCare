@@ -27,13 +27,13 @@ const adminLogin=async(req,res)=>{
     const isPasswordValid = await user.isPasswordCorrect(password);
     if (!isPasswordValid) return res.status(400).json({ message: "invalid password" });
     const {Token,refreshToken}=await generateTokenAndRefreshToken(user._id);
-    const loggedInUser=await Admin.findById(user._id).select("-password -refreshToken");
+    const User=await Admin.findById(user._id).select("-password -refreshToken");
     const options={httpOnly:true,secure:true};
     return  res.status(200)
     .cookie("Token",Token,options)
     .cookie("refreshToken",refreshToken,options)
     .json({
-      loggedInUser,
+      User,
       message:"Admin loggedIn successfully",
       Token,
       refreshToken

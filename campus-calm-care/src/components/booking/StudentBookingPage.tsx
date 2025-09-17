@@ -202,9 +202,12 @@ const StudentBookingPage: React.FC = () => {
 
           {counsellors.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-teal-400 mb-4"></div>
-              <p className="text-gray-600 text-lg">Discovering amazing counsellors for you...</p>
-            </div>
+  <Users className="w-16 h-16 text-gray-400 mb-4" />
+  <p className="text-gray-600 text-xl text-center">
+    No counsellors are available at the moment.<br />
+    Please check back later or contact support for assistance.
+  </p>
+</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {counsellors.map((c) => {

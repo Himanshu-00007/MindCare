@@ -111,22 +111,46 @@ const StudentChatPage: React.FC = () => {
             className="overflow-y-auto h-[500px] p-6 space-y-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 shadow-inner"
             ref={chatContainerRef}
           >
-            {chatHistory.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex ${msg.sender === "student" ? "justify-end" : "justify-start"} animate-fade-in-up`}
-              >
-                <div
-                  className={`px-6 py-4 rounded-2xl max-w-full md:max-w-md break-words shadow-lg transition-all duration-300 hover:scale-105 ${
-                    msg.sender === "student"
-                      ? "bg-gradient-to-r from-teal-400 to-blue-400 text-white shadow-teal-300/25"
-                      : "bg-white/30 backdrop-blur-md text-gray-900 border border-white/20 shadow-white/10"
-                  }`}
+            {chatHistory.length === 0 ? (
+              <div className="flex flex-col items-center justify-center text-gray-400 text-center mt-24">
+                <svg
+                  className="w-16 h-16 mb-4 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <div className="text-medium font-medium">{msg.text}</div>
-                </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8 10h.01M12 14h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 21l1.95-4.745A8.982 8.982 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  ></path>
+                </svg>
+                <p className="text-lg font-medium">
+                  💬 Start the conversation! Share your thoughts or ask for support.
+                </p>
               </div>
-            ))}
+            ) : (
+              chatHistory.map((msg, i) => (
+                <div
+                  key={i}
+                  className={`flex ${
+                    msg.sender === "student" ? "justify-end" : "justify-start"
+                  } animate-fade-in-up`}
+                >
+                  <div
+                    className={`px-6 py-4 rounded-2xl max-w-full md:max-w-md break-words shadow-lg transition-all duration-300 hover:scale-105 ${
+                      msg.sender === "student"
+                        ? "bg-gradient-to-r from-teal-400 to-blue-400 text-white shadow-teal-300/25"
+                        : "bg-white/30 backdrop-blur-md text-gray-900 border border-white/20 shadow-white/10"
+                    }`}
+                  >
+                    <div className="text-medium font-medium">{msg.text}</div>
+                  </div>
+                </div>
+              ))
+            )}
 
             {loading && (
               <div className="flex justify-start animate-pulse">
@@ -162,7 +186,9 @@ const StudentChatPage: React.FC = () => {
                 onChange={(e) => setMessage(e.target.value)}
                 className="w-full bg-white/20 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-300/50 focus:border-teal-300/50 transition-all duration-300 hover:bg-white/30 shadow-lg"
                 placeholder="Share your thoughts or concerns..."
-                onKeyDown={(e) => e.key === "Enter" && !loading && sendMessage()}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && !loading && sendMessage()
+                }
               />
             </div>
             <button
@@ -187,7 +213,9 @@ const StudentChatPage: React.FC = () => {
       {snackbar && (
         <div
           className={`fixed bottom-8 right-8 px-6 py-4 rounded-2xl shadow-2xl text-white backdrop-blur-md border transition-all duration-300 animate-slide-in ${
-            snackbar.type === "success" ? "bg-green-400/80 border-green-300/40" : "bg-red-400/80 border-red-300/40"
+            snackbar.type === "success"
+              ? "bg-green-400/80 border-green-300/40"
+              : "bg-red-400/80 border-red-300/40"
           }`}
         >
           <div className="font-medium">{snackbar.message}</div>
@@ -196,6 +224,7 @@ const StudentChatPage: React.FC = () => {
     </div>
   </div>
 );
+
 
 
 

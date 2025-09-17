@@ -62,28 +62,34 @@ export const createBooking = async (req, res) => {
   }
 };
 
+
+
 export const listBookings = async (req, res) => {
   try {
-    const user = req.user;
-    const { counsellorId, studentId } = req.query;
+    const userId = req.user._id;
+    
 
     let filter = {};
-    if (user.role === "student") filter.student = user._id;
-    else if (user.role === "counsellor") filter.counsellor = user._id;
-    if (counsellorId) filter.counsellor = counsellorId;
-    if (studentId) filter.student = studentId;
 
-    const bookings = await Booking.find(filter)
-      .sort({ start: 1 })
-      .populate("student", "name email institution")
-      .populate("counsellor", "name email");
+    const student = await Student.findById(userId).select("institution");
+    
 
-    return res.status(200).json({ bookings });
+    if (student && student.institution) {
+      filter.institution = student.institution;
+      
+    }
+
+    const counsellors = await Counsellor.find(filter).select("-password -refreshToken");
+    
+
+    res.status(200).json({ counsellors });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Error listing bookings", error: err.message });
+    
+    res.status(500).json({ message: "Failed to fetch counsellors" });
   }
 };
+
+
 
 export const getBooking = async (req, res) => {
   try {
