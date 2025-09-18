@@ -142,4 +142,22 @@ const listCounsellors = async (req, res) => {
     return res.status(500).json({ message: "Error fetching counsellors", error: err.message });
   }
 };
-export {counsellorRegister,counsellorLogin,generateTokenAndRefreshToken,counsellorLogout,listCounsellors}
+const getMyProfile = async (req, res) => {
+  try {
+    const counsellorId = req.user._id; // JWT middleware se aayega
+    if (!counsellorId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const counsellor = await Counsellor.findById(counsellorId).select("name email");
+    if (!counsellor) {
+      return res.status(404).json({ message: "counsellor not found" });
+    }
+
+    res.status(200).json({ name: counsellor.name, email: counsellor.email });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+export {counsellorRegister,counsellorLogin,generateTokenAndRefreshToken,counsellorLogout,listCounsellors,getMyProfile}

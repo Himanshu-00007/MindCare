@@ -48,7 +48,7 @@ export const createBooking = async (req, res) => {
       end: endDate,
       durationMinutes,
       notes,
-      status: "confirmed"
+      status: "pending"
     });
 
     const populated = await Booking.findById(booking._id)
@@ -188,5 +188,23 @@ export const cancelMyBookingAsCounsellor = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Error cancelling booking", error: err.message });
+  }
+};
+export const confirmBookingAsCounsellor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findById(id);
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
+
+    if (booking.counsellor.toString() !== req.user._id.toString())
+      return res.status(403).json({ message: "Not authorized" });
+
+    booking.status = "confirmed";
+    await booking.save();
+
+    res.status(200).json({ message: "Booking confirmed", booking });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error confirming booking" });
   }
 };

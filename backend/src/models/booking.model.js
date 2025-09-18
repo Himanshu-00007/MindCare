@@ -7,7 +7,7 @@ const bookingSchema = new mongoose.Schema({
   start: { type: Date, required: true },
   end: { type: Date, required: true },
   durationMinutes: { type: Number, default: 60 },
-  status: { type: String, enum: ["pending", "confirmed", "cancelled"], default: "confirmed" },
+  status: { type: String, enum: ["pending", "confirmed", "cancelled"], default: "pending" },
   notes: { type: String },
   createdByRole: { type: String, enum: ["student", "admin"], default: "student" }
 }, { timestamps: true });

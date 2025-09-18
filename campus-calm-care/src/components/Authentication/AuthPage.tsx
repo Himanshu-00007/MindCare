@@ -97,7 +97,7 @@ const AuthPage: React.FC = () => {
 
         setTimeout(() => {
           if (role === "student") navigate("/student-dashboard");
-          else if (role === "counsellor") navigate("/counsellor-booking");
+          else if (role === "counsellor") navigate("/counsellor-dashboard");
           else if (role === "admin") navigate("/video-dashboard");
         }, 1000);
       } else {
@@ -113,7 +113,7 @@ const AuthPage: React.FC = () => {
 
         setTimeout(() => {
           if (role === "student") navigate("/student-dashboard");
-          else if (role === "counsellor") navigate("/counsellor-booking");
+          else if (role === "counsellor") navigate("/counsellor-dashboard");
           else if (role === "admin") navigate("/video-dashboard");
         }, 1000);
       }

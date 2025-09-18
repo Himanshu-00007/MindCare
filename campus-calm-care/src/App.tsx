@@ -12,13 +12,14 @@ import NotFound from "./pages/NotFound";
 
 
 import StudentBookingPage from "./components/booking/StudentBookingPage"
-import CounsellorDashboardPage from "./components/booking/CounsellorDashboardPage";
+import CounsellorBookingPage from "./components/booking/CounsellorBookingPage";
 import StudentChatPage from "./components/chat/StudentChatPage";
 import AuthPage from "./components/Authentication/AuthPage";
 import MediaDashboard from "./components/ResourceHub/MediaDashboard";
 import StudentHeader from "./components/Dashboard/StudentDashboard";
 import StudentMediaDashboard from "./components/ResourceHub/StudentMediaDashboard";
 import SelfAssessmentForm from "./components/SelfAssessment/SelfAssessmentForm";
+import CounsellorDashboard from "./components/Dashboard/CounsellorDashboard";
 
 
 // Initialize react-query
@@ -31,11 +32,12 @@ const router = createBrowserRouter(
     { path: "/auth", element: <AuthPage /> },
     { path: "/chat", element: <StudentChatPage /> },
     {path: "/student-booking", element: <StudentBookingPage/>},
-    {path: "/counsellor-booking", element: <CounsellorDashboardPage />},
+    {path: "/counsellor-booking", element: <CounsellorBookingPage />},
     {path: "/media-dashboard", element: <MediaDashboard />},
     {path: "/student-dashboard", element: <StudentHeader />},
     {path: "/student-media", element: <StudentMediaDashboard />},
     {path: "/self-assessment", element: <SelfAssessmentForm />},
+    {path: "/counsellor-dashboard", element: <CounsellorDashboard />},
 
     { path: "*", element: <NotFound /> },
     

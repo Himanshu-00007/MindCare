@@ -30,7 +30,7 @@ const Header = () => {
   const toggleMenu=()=>setIsMenuOpen(!isMenuOpen);
   const showSnackbar=(message:string,type:"success"|"error")=>{setSnackbar({message,type});setTimeout(()=>setSnackbar(null),1000);}
   const handleLogin=()=>navigate("/auth");
-  const handleDashboard=()=>{if(role==="student")navigate("/student-dashboard");else if(role==="counsellor")navigate("/counsellor-booking");else if(role==="admin")navigate("/video-dashboard");else navigate("/");}
+  const handleDashboard=()=>{if(role==="student")navigate("/student-dashboard");else if(role==="counsellor")navigate("/counsellor-dashboard");else if(role==="admin")navigate("/video-dashboard");else navigate("/");}
   const handleLogout=()=>{localStorage.removeItem("Token");localStorage.removeItem("id");localStorage.removeItem("role");setIsLoggedIn(false);setRole(null);navigate("/");showSnackbar("Logged out successfully!","success");}
 
   return (

@@ -32,9 +32,9 @@ const StudentBookingPage: React.FC = () => {
   const [start, setStart] = useState<string>("");
   const [duration, setDuration] = useState<number>(60);
   const [notes, setNotes] = useState<string>("");
+  const [status, setStatus] = useState<string>("pending");
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const [bookedCounsellorId, setBookedCounsellorId] = useState<string | null>(null);
   const [bookingId, setBookingId] = useState<string | null>(null);
 
@@ -75,7 +75,7 @@ const StudentBookingPage: React.FC = () => {
 
   const fetchMyBooking = async () => {
     try {
-      const res = await axios.get<{ booking: { _id: string; counsellor: Counsellor } }>(
+      const res = await axios.get<{ booking: { _id: string; counsellor: Counsellor; status: string } }>(
         "http://localhost:5000/api/v1/bookings/my-booking",
         getConfig()
       );
@@ -83,6 +83,7 @@ const StudentBookingPage: React.FC = () => {
       if (res.data.booking) {
         setBookedCounsellorId(res.data.booking.counsellor._id);
         setBookingId(res.data.booking._id);
+        setStatus(res.data.booking.status);
       }
     } catch (err: any) {
       if (err.response?.status === 401) handleUnauthorized();
@@ -109,7 +110,7 @@ const StudentBookingPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const res = await axios.post<{ booking: { _id: string } }>(
+      const res = await axios.post<{ booking: { _id: string; status: string } }>(
         "http://localhost:5000/api/v1/bookings/create-booking",
         {
           counsellorId: selectedCounsellor._id,
@@ -120,13 +121,12 @@ const StudentBookingPage: React.FC = () => {
         getConfig()
       );
 
-      toast.success("Booking confirmed successfully!");
+      toast.success("Session booked successfully!");
       setBookedCounsellorId(selectedCounsellor._id);
       setBookingId(res.data.booking._id);
-      setShowSuccess(true);
-
+      setStatus(res.data.booking.status);
       setTimeout(() => {
-        setShowSuccess(false);
+        
         setSelectedCounsellor(null);
         setStart("");
         setDuration(60);
@@ -155,15 +155,11 @@ const StudentBookingPage: React.FC = () => {
       toast.success("Booking cancelled successfully");
       setBookedCounsellorId(null);
       setBookingId(null);
+      setStatus("cancelled");
     } catch (err: any) {
       if (err.response?.status === 401) handleUnauthorized();
       else toast.error(err.response?.data?.message || "Failed to cancel booking");
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString();
   };
 
   const getDesignationIcon = (designation: string) => {
@@ -202,12 +198,12 @@ const StudentBookingPage: React.FC = () => {
 
           {counsellors.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20">
-  <Users className="w-16 h-16 text-gray-400 mb-4" />
-  <p className="text-gray-600 text-xl text-center">
-    No counsellors are available at the moment.<br />
-    Please check back later or contact support for assistance.
-  </p>
-</div>
+              <Users className="w-16 h-16 text-gray-400 mb-4" />
+              <p className="text-gray-600 text-xl text-center">
+                No counsellors are available at the moment.<br />
+                Please check back later or contact support for assistance.
+              </p>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {counsellors.map((c) => {
@@ -250,9 +246,9 @@ const StudentBookingPage: React.FC = () => {
                       <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-teal-700 transition-colors">
                         {c.name}
                       </h3>
-                      <p className="text-gray-700 mb-4 text-sm">{c.email}</p>
+                      <p className="text-gray-700 mb-2 text-sm">{c.email}</p>
 
-                      <div className="bg-white/10 rounded-2xl p-4 mb-6 border border-white/20">
+                      <div className="bg-white/10 rounded-2xl p-4 mb-4 border border-white/20">
                         <div className="flex items-center gap-3">
                           <Award className="w-5 h-5 text-purple-400 flex-shrink-0" />
                           <span className="text-gray-700 font-medium">
@@ -261,21 +257,33 @@ const StudentBookingPage: React.FC = () => {
                         </div>
                       </div>
 
-                      {bookedCounsellorId === c._id ? (
-                        <button
-                          className="w-full bg-gradient-to-r from-red-300 to-red-400 text-white py-3 rounded-2xl hover:from-red-400 hover:to-red-500 transition-all transform hover:scale-105 shadow-md font-bold text-lg"
-                          onClick={cancelBooking}
-                        >
-                          Cancel Session
-                        </button>
-                      ) : (
-                        <button
-                          className="w-full bg-gradient-to-r from-teal-300 via-lavender-300 to-blue-300 text-gray-900 py-3 rounded-2xl hover:from-teal-400 hover:via-lavender-400 hover:to-blue-400 transition-all transform hover:scale-105 shadow-md font-bold text-lg"
-                          onClick={() => setSelectedCounsellor(c)}
-                        >
-                          Book Session
-                        </button>
+                      {/* Status Badge */}
+                      {bookedCounsellorId === c._id && bookingId && (
+                        <div className="mb-4 flex items-center justify-center">
+                          <span
+                            className={`px-4 py-1 rounded-full font-bold text-sm ${
+                              status === "pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : status === "confirmed"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                          </span>
+                        </div>
                       )}
+
+                      <button
+                        className={`w-full py-3 rounded-2xl shadow-md font-bold text-lg transition-all transform ${
+                          bookedCounsellorId === c._id
+                            ? "bg-gradient-to-r from-red-300 to-red-400 text-white hover:from-red-400 hover:to-red-500"
+                            : "bg-gradient-to-r from-teal-300 via-lavender-300 to-blue-300 text-gray-900 hover:from-teal-400 hover:via-lavender-400 hover:to-blue-400"
+                        }`}
+                        onClick={bookedCounsellorId === c._id ? cancelBooking : () => setSelectedCounsellor(c)}
+                      >
+                        {bookedCounsellorId === c._id ? "Cancel Session" : "Book Session"}
+                      </button>
                     </div>
                   </div>
                 );
