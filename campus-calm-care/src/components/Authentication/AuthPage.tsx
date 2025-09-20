@@ -98,7 +98,7 @@ const AuthPage: React.FC = () => {
         setTimeout(() => {
           if (role === "student") navigate("/student-dashboard");
           else if (role === "counsellor") navigate("/counsellor-dashboard");
-          else if (role === "admin") navigate("/video-dashboard");
+          else if (role === "admin") navigate("/admin-dashboard");
         }, 1000);
       } else {
         // Normal login
@@ -114,7 +114,7 @@ const AuthPage: React.FC = () => {
         setTimeout(() => {
           if (role === "student") navigate("/student-dashboard");
           else if (role === "counsellor") navigate("/counsellor-dashboard");
-          else if (role === "admin") navigate("/video-dashboard");
+          else if (role === "admin") navigate("/admin-dashboard");
         }, 1000);
       }
     } catch (err: any) {

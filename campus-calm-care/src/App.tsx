@@ -20,6 +20,8 @@ import StudentHeader from "./components/Dashboard/StudentDashboard";
 import StudentMediaDashboard from "./components/ResourceHub/StudentMediaDashboard";
 import SelfAssessmentForm from "./components/SelfAssessment/SelfAssessmentForm";
 import CounsellorDashboard from "./components/Dashboard/CounsellorDashboard";
+import AdminDashboard from "./components/Dashboard/AdminDashboard";
+import ResourceHub from "./components/ResourceHub/ResourceHub";
 
 
 // Initialize react-query
@@ -34,10 +36,12 @@ const router = createBrowserRouter(
     {path: "/student-booking", element: <StudentBookingPage/>},
     {path: "/counsellor-booking", element: <CounsellorBookingPage />},
     {path: "/media-dashboard", element: <MediaDashboard />},
+    {path: "/admin-dashboard", element: <AdminDashboard />},
     {path: "/student-dashboard", element: <StudentHeader />},
     {path: "/student-media", element: <StudentMediaDashboard />},
     {path: "/self-assessment", element: <SelfAssessmentForm />},
     {path: "/counsellor-dashboard", element: <CounsellorDashboard />},
+    {path: "/resource-hub", element: <ResourceHub />},
 
     { path: "*", element: <NotFound /> },
     

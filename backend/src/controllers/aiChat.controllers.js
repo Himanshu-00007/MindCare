@@ -1,7 +1,9 @@
+// controllers/chat.controller.js
+
 import Chat from "../models/chat.model.js";
 import Student from "../models/student.model.js";
 import axios from "axios";
-import { mentalAidLibrary } from "../utils/mentalAidLibrary.js";
+import { mentalAidLibrary, getRandomTechnique } from "../utils/mentalAidLibrary.js";
 
 // 🔹 Suicidal keywords check
 const suicideKeywords = [
@@ -9,83 +11,78 @@ const suicideKeywords = [
 ];
 
 function containsSuicidalText(text) {
-  const t = text.toLowerCase();
-  return suicideKeywords.some(k => t.includes(k));
+  return suicideKeywords.some(k => text.toLowerCase().includes(k));
 }
 
-// 🔹 Triage logic
+// 🔹 Determine triage level based on message + mental health scores
 async function triageStudent(student, messageText) {
+  const scores = student.mental_health_score || {};
   let level = "low";
   let reason = [];
 
   if (containsSuicidalText(messageText)) {
-    level = "high";
-    reason.push("suicidal language detected");
-    return { level, reason: reason.join(", ") };
+    return { level: "high", reason: "suicidal language detected" };
   }
 
-  const scores = student.mental_health_score || {};
-  if ((scores.phq9 >= 15) || (scores.gad7 >= 15)) {
-    level = "high";
-    reason.push("high PHQ/GAD scores");
-    return { level, reason: reason.join(", ") };
-  } else if ((scores.phq9 >= 10) || (scores.gad7 >= 10)) {
+  if ((scores.PHQ9 >= 15) || (scores.GAD7 >= 15)) {
+    return { level: "high", reason: "high PHQ9/GAD7 scores" };
+  } else if ((scores.PHQ9 >= 10) || (scores.GAD7 >= 10)) {
     level = "medium";
-    reason.push("moderate PHQ/GAD scores");
+    reason.push("moderate PHQ9/GAD7 scores");
   }
 
   return { level, reason: reason.join(", ") };
 }
 
-// 🔹 System prompt for AI
+// 🔹 Build AI system prompt
 function buildSystemPrompt(student, triage) {
-  return `You are a compassionate, brief mental-health first-aid assistant for college students.
+  let copingSection = "";
+
+  if (triage.level === "medium" || triage.level === "high") {
+    copingSection = `
+Coping techniques:
+${Object.entries(mentalAidLibrary.techniques).map(([k, v]) => `• ${k}: ${v}`).join("\n")}
+`;
+  }
+
+  return `You are a compassionate mental health assistant for college students.
 - ${mentalAidLibrary.rules.join("\n- ")}
 
 Goals:
 - ${mentalAidLibrary.goals.join("\n- ")}
 
-Coping techniques:
-${Object.entries(mentalAidLibrary.techniques)
-  .map(([k, v]) => `• ${k}: ${v}`)
-  .join("\n")}
+${copingSection}Escalation:
+- High distress: ${mentalAidLibrary.escalation.high.join(" | ")}
+- Medium distress: ${mentalAidLibrary.escalation.medium.join(" | ")}
+- Low distress: ${mentalAidLibrary.escalation.low.join(" | ")}
 
-Escalation guidelines:
-- High distress: ${mentalAidLibrary.escalation.high}
-- Medium distress: ${mentalAidLibrary.escalation.medium}
-- Low distress: ${mentalAidLibrary.escalation.low}
+Instructions for AI:
+- Respond in a supportive, empathetic, non-judgemental style (<140 words).
+- Only provide mental health tips if the student shows stress or distress (medium/high triage).
+- Do NOT provide coping tips for neutral or factual questions.
+- Offer “Would you like me to connect you to a counsellor?” only if triage is medium or high.
 
-Keep responses supportive, non-judgemental, conversational, and under 140 words.
-Offer “Would you like me to connect you to a counsellor?” if triage is medium or high.
-
-Student context:
-- preferred_language: ${student.preferred_language || "English"}
-- institution: ${student.institution || "Unknown"}
-- triage_level: ${triage.level}
-`;
+Student info:
+- Preferred language: ${student.preferred_language || "English"}
+- Institution: ${student.institution || "Unknown"}
+- Triage level: ${triage.level}`;
 }
 
 // 🔹 Call Gemini API
-async function callGemini(prompt, conversationHistory = []) {
+async function callGemini(prompt, history = []) {
   const GEMINI_KEY = process.env.GEMINI_API_KEY;
   if (!GEMINI_KEY) throw new Error("GEMINI_API_KEY not set");
 
-  const historyText = conversationHistory.map(
-    m => `${m.role === "user" ? "Student" : "AI"}: ${m.content}`
-  ).join("\n");
+  const historyText = history.map(m => `${m.role === "user" ? "Student" : "AI"}: ${m.content}`).join("\n");
 
   const response = await axios.post(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
-    {
-      contents: [
-        { parts: [{ text: `${prompt}\n\nConversation history:\n${historyText}` }] }
-      ]
-    },
+    { contents: [{ parts: [{ text: `${prompt}\n\nConversation history:\n${historyText}` }] }] },
     { headers: { "Content-Type": "application/json" } }
   );
 
   const candidates = response.data.candidates;
-  if (!candidates || !candidates.length) throw new Error("Gemini returned no candidates");
+  if (!candidates?.length) throw new Error("Gemini returned no candidates");
 
   return candidates[0].content.parts[0].text.trim();
 }
@@ -107,26 +104,32 @@ export const studentChat = async (req, res) => {
 
     chat.messages.push({ sender: "student", text: message, meta: {} });
 
-    // High-risk escalation
+    // High triage: escalate immediately
     if (triage.level === "high") {
       chat.lastTriage = { level: "high", reason: triage.reason, createdAt: new Date() };
       chat.escalatedToCounsellor = true;
       await chat.save();
 
       return res.status(200).json({
-        reply: mentalAidLibrary.escalation.high,
+        reply: mentalAidLibrary.escalation.high.join(" | "),
         triage,
         escalated: true
       });
     }
 
     const systemPrompt = buildSystemPrompt(student, triage);
-    const history = (chat.messages || []).slice(-6).map(m => ({
+
+    const history = chat.messages.slice(-6).map(m => ({
       role: m.sender === "student" ? "user" : "assistant",
       content: m.text
     }));
 
-    const botReply = await callGemini(systemPrompt, history);
+    let botReply = await callGemini(systemPrompt, history);
+
+    // Only add tip if triage is medium or high
+    if (triage.level === "medium" || triage.level === "high") {
+      botReply += `\n\n💡 Tip: ${getRandomTechnique()}`;
+    }
 
     chat.messages.push({ sender: "ai", text: botReply, meta: { triage: triage.level } });
     chat.lastTriage = { level: triage.level, reason: triage.reason, createdAt: new Date() };
@@ -136,7 +139,7 @@ export const studentChat = async (req, res) => {
 
     return res.status(200).json({ reply: botReply, triage, suggestBooking });
   } catch (error) {
-    console.error("chat error:", error.response?.data || error.message);
+    console.error("Chat error:", error.response?.data || error.message);
     return res.status(500).json({ message: "Error in chat", error: error.message });
   }
 };
@@ -144,15 +147,15 @@ export const studentChat = async (req, res) => {
 // 🔹 GET /chatbot/history
 export const getChatHistory = async (req, res) => {
   try {
-    const studentId = req.user._id; // JWT se directly
+    const studentId = req.user._id;
     if (!studentId) return res.status(400).json({ message: "studentId missing" });
 
-    const chat = await Chat.findOne({ student: studentId }).populate("student", "name email institution");
-    if (!chat) return res.status(404).json({ message: "No chat history found" });
+    const chat = await Chat.findOne({ student: studentId })
+      .populate("student", "name email institution");
 
     return res.status(200).json(chat);
   } catch (err) {
-    console.error("history error:", err.message);
+    console.error("History error:", err.message);
     return res.status(500).json({ message: "Error fetching history", error: err.message });
   }
 };

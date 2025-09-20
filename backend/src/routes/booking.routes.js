@@ -22,7 +22,7 @@ router.get("/my-booking", verifyJWT, getMyBooking);
 router.get("/counsellor-bookings", counsellorAuth, getMyBookingsForCounsellor);
 router.delete("/counsellor-cancel-booking/:id", counsellorAuth, cancelMyBookingAsCounsellor);
 router.patch(
-  "/bookings/confirm/:id",
+  "/confirm/:id",
   counsellorAuth, // ensure user is logged in
   confirmBookingAsCounsellor
 );

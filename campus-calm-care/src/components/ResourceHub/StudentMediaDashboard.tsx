@@ -8,9 +8,9 @@ interface Media {
   description: string;
   mediaFile: string;
   like: number;
-  dislike: number;          // Add this
-  likedBy: string[];        // Add this
-  dislikedBy: string[];     // Add this
+  dislike: number;          
+  likedBy: string[];        
+  dislikedBy: string[];    
   views: number;
   owner: string;
 }
