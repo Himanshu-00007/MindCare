@@ -50,13 +50,12 @@ const router = createBrowserRouter(
 );
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <RouterProvider router={router} />
-    </TooltipProvider>
-  </QueryClientProvider>
+  
+      <RouterProvider
+      router={router}
+      future={{ v7_startTransition: true }}
+    />
+    
 );
 
 export default App;

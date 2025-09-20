@@ -1,138 +1,69 @@
-import { Heart, Twitter, Linkedin, Github, Phone, Mail, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="py-16 lg:py-20 section-alt border-t border-border">
+    <footer className="bg-gray-900 text-gray-300 py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-4 gap-8 lg:gap-12">
-          {/* Left - Logo & Tagline */}
+          
+          {/* Left - Logo & Description */}
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <Heart className="w-5 h-5 text-white" />
+              <div className="w-8 h-8  rounded-lg flex items-center justify-center">
+                <img src="/imp.jpeg" />
               </div>
-              <span className="text-xl font-semibold text-foreground">MindCare</span>
+              <span className="text-xl font-semibold text-white">MindCare</span>
             </div>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              Supporting Student Well-being through compassionate, accessible mental health care.
+            <p className="text-gray-400 mb-6 leading-relaxed">
+              Your Mind, Your Strength: Nurture Your Mental Health, Embrace Your Happiness, and Unlock Your True Potential
             </p>
-            <div className="flex space-x-4">
-              <a 
-                href="#" 
-                className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a 
-                href="#" 
-                className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a 
-                href="#" 
-                className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-colors"
-                aria-label="GitHub"
-              >
-                <Github className="w-5 h-5" />
-              </a>
-            </div>
           </div>
 
-          {/* Center - Quick Links */}
+          {/* Quick Links */}
           <div className="lg:col-span-1">
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Quick Links</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Features
-                </a>
-              </li>
-              <li>
-                <a href="#resources" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Resources
-                </a>
-              </li>
-              <li>
-                <a href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
-                </a>
-              </li>
+            <h3 className="text-lg font-semibold mb-4 text-white">Quick Links</h3>
+            <ul className="space-y-2">
+              <li><a href="https://www.who.int/health-topics/mental-health#tab=tab_1" className="hover:text-white transition-colors">About Mental Health</a></li>
+              <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
+              <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
             </ul>
           </div>
 
-          {/* Right - Help & Resources */}
+          {/* Resources */}
           <div className="lg:col-span-1">
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Help & Resources</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  24/7 Helpline
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Emergency Support
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Terms of Service
-                </a>
-              </li>
+            <h3 className="text-lg font-semibold mb-4 text-white">Resources</h3>
+            <ul className="space-y-2">
+              <li><a href="https://nhm.gov.in/index1.php?lang=1&level=2&lid=359&sublinkid=1043&utm_source=chatgpt.com" className="hover:text-white transition-colors">Mental Health Guidelines</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Mental Health Documents</a></li>
+              
             </ul>
           </div>
 
           {/* Contact Info */}
           <div className="lg:col-span-1">
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Contact Info</h3>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <Mail className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <a href="mailto:support@mindcare.com" className="text-foreground hover:text-primary transition-colors">
-                    support@mindcare.com
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Phone className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <a href="tel:+911234567890" className="text-foreground hover:text-primary transition-colors">
-                    +91 12345 67890
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Location</p>
-                  <p className="text-foreground">New Delhi, India</p>
-                </div>
-              </div>
-            </div>
+            <h3 className="text-lg font-semibold mb-4 text-white">Contact Us</h3>
+            <ul className="space-y-3">
+              <li className="flex items-center space-x-3">
+                <Mail className="w-5 h-5 text-green-600" />
+                <a href="mailto:contactus@mcf.org.in" className="hover:text-white transition-colors">
+                  contactus@mcf.org.in
+                </a>
+              </li>
+              <li className="flex items-center space-x-3">
+                <Phone className="w-5 h-5 text-green-600" />
+                <a href="tel:+1800-891-4416" className="hover:text-white transition-colors">
+                  +1800-891-4416
+                </a>
+              </li>
+              
+            </ul>
           </div>
+
         </div>
 
         {/* Bottom Copyright */}
-        <div className="mt-12 pt-8 border-t border-border text-center">
-          <p className="text-muted-foreground">
-            © 2024 MindCare. All rights reserved. Created with care for student mental health.
-          </p>
+        <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+          © 2025 MindCare.  <span className="block mt-1">Team - Algo Avengers</span>
         </div>
       </div>
     </footer>

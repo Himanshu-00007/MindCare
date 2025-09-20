@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Header from "../Header";
+import StudentHeader from "../StudentHeader";
 
 // 🔹 Snackbar Component
 const Snackbar = ({
@@ -126,6 +128,7 @@ const AuthPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 flex items-center justify-center px-4">
+      
       <Card className="w-full max-w-md shadow-xl bg-white/90 backdrop-blur-lg rounded-2xl">
         <CardContent className="p-8">
           <h1 className="text-3xl font-bold text-center text-indigo-600 mb-4">MindCare Auth</h1>

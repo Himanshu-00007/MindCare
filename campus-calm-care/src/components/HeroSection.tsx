@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Play } from 'lucide-react';
-import heroImage from '@/assets/hero-mental-health.jpg';
+import heroImage from '@/assets/mind.jpg';
+import {  useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate=useNavigate();
   return (
     <section className="pt-24 pb-16 lg:pt-32 lg:pb-24 bg-gradient-to-br from-background via-background to-muted relative overflow-hidden">
       {/* Floating Background Elements */}
@@ -38,21 +40,24 @@ const HeroSection = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                className="hover-glow text-base px-8 py-3"
-              >
-                Get Started
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="text-base px-8 py-3"
-              >
-                <Play className="mr-2 w-5 h-5" />
-                Learn More
-              </Button>
+              <Button
+      size="lg"
+      className="hover-glow text-base px-8 py-3"
+      onClick={() => navigate("/auth")}
+    >
+      Get Started
+      <ArrowRight className="ml-2 w-5 h-5" />
+    </Button>
+              <a href="#features">
+  <Button 
+    variant="outline" 
+    size="lg" 
+    className="text-base px-8 py-3"
+  >
+    <Play className="mr-2 w-5 h-5" />
+    Learn More
+  </Button>
+</a>
             </div>
           </div>
           

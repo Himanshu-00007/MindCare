@@ -1,31 +1,21 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  MessageCircle, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
-  Shield,
-  Heart,
-  Send
-} from 'lucide-react';
+import { Heart, MessageCircle, Phone, Mail, MapPin, Clock, Shield } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
 const ContactSection = () => {
   const navigate = useNavigate();
-  const handleStartChat = () => {
-  const id = localStorage.getItem("id");
-  const Token = localStorage.getItem("Token");
 
-  if (id && Token) {
-    navigate("/chat"); // AuthGuard will allow access
-  } else {
-    navigate("/auth"); // Not logged in → redirect to login
-  }
-};
+  const handleStartChat = () => {
+    const id = localStorage.getItem("id");
+    const Token = localStorage.getItem("Token");
+
+    if (id && Token) {
+      navigate("/chat"); // AuthGuard will allow access
+    } else {
+      navigate("/auth"); // Not logged in → redirect to login
+    }
+  };
 
   const contactMethods = [
     {
@@ -35,7 +25,7 @@ const ContactSection = () => {
       action: 'Start Chat',
       availability: '24/7 Available',
       primary: true,
-      onClick: handleStartChat 
+      onClick: handleStartChat
     },
     {
       icon: Phone,
@@ -44,7 +34,7 @@ const ContactSection = () => {
       action: 'Call Now',
       availability: 'Emergency Only',
       urgent: true,
-      onClick: () => window.location.href = "tel:+911234567890" // ✅ phone call
+      onClick: () => window.location.href = "tel:+911234567890"
     },
     {
       icon: Mail,
@@ -52,31 +42,14 @@ const ContactSection = () => {
       description: 'Send us your questions and concerns',
       action: 'Send Email',
       availability: 'Response in 24hrs',
-      onClick: () => window.location.href = "mailto:support@mindcare.com" // ✅ mailto link
-    }
-  ];
-
-  const campusInfo = [
-    {
-      icon: MapPin,
-      title: 'Campus Locations',
-      details: ['New Delhi - Main Office', 'Mumbai - Regional Hub', 'Bangalore - Tech Center', 'Kolkata - Eastern Hub']
-    },
-    {
-      icon: Clock,
-      title: 'Support Hours',
-      details: ['24/7 - Crisis Support', 'Mon-Fri 9AM-8PM - General', 'Weekends 10AM-6PM - Limited', 'Holidays - Emergency Only']
-    },
-    {
-      icon: Shield,
-      title: 'Privacy Guarantee',
-      details: ['100% Confidential', 'HIPAA Compliant', 'Anonymous Options', 'Secure Platform']
+      onClick: () => window.location.href = "mailto:support@mindcare.com"
     }
   ];
 
   return (
     <section id="contact" className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Heading */}
         <div className="text-center mb-16 animate-fade-in">
           <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Heart className="w-8 h-8 text-white" />
@@ -91,7 +64,7 @@ const ContactSection = () => {
         </div>
 
         {/* Contact Methods */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-8">
           {contactMethods.map((method, index) => (
             <Card 
               key={index} 
@@ -131,102 +104,13 @@ const ContactSection = () => {
                   variant={method.primary ? 'default' : method.urgent ? 'destructive' : 'outline'}
                   size="sm"
                   className="w-full hover-glow"
-                  onClick={method.onClick} // ✅ handle action
+                  onClick={method.onClick}
                 >
                   {method.action}
                 </Button>
               </CardContent>
             </Card>
           ))}
-        </div>
-
-        {/* Contact Form + Campus Info */}
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <Card className="border-0 shadow-elegant bg-background animate-fade-in">
-            <CardContent className="p-8">
-              <h3 className="text-2xl font-bold mb-6 text-foreground">
-                Send us a Message
-              </h3>
-              
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                      First Name
-                    </label>
-                    <Input placeholder="Enter your first name" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                      Last Name
-                    </label>
-                    <Input placeholder="Enter your last name" />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Email Address
-                  </label>
-                  <Input type="email" placeholder="your.email@university.edu" />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    University/Institution
-                  </label>
-                  <Input placeholder="Your university name" />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    How can we help you?
-                  </label>
-                  <Textarea 
-                    placeholder="Please describe how we can assist you. Remember, this is not for crisis situations - use our emergency contacts for immediate help."
-                    rows={4}
-                  />
-                </div>
-                
-                <Button className="w-full hover-glow">
-                  <Send className="w-4 h-4 mr-2" />
-                  Send Message
-                </Button>
-                
-                <p className="text-xs text-muted-foreground text-center">
-                  For immediate crisis support, please use our 24/7 helpline or emergency contacts.
-                </p>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Campus Information */}
-          <div className="space-y-8 animate-fade-in animate-delay-200">
-            {campusInfo.map((info, index) => (
-              <Card key={index} className="border-0 shadow-card bg-background">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <info.icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-semibold mb-3 text-foreground">
-                        {info.title}
-                      </h4>
-                      <ul className="space-y-2">
-                        {info.details.map((detail, i) => (
-                          <li key={i} className="text-muted-foreground text-sm">
-                            • {detail}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
         </div>
       </div>
     </section>

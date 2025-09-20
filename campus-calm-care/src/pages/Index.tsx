@@ -9,6 +9,7 @@ import ResourcesSection from '@/components/ResourcesSection';
 import NewsletterSection from '@/components/NewsletterSection';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
+import FAQ from '@/components/FAQ';
 
 const Index = () => {
   return (
@@ -18,12 +19,7 @@ const Index = () => {
         <HeroSection />
         <AboutSection />
         <FeaturesSection />
-        <DifferentiatorSection />
-        <TestimonialSection />
-        <ImpactSection />
-        <ResourcesSection />
-        <NewsletterSection />
-        <ContactSection />
+        <FAQ/>
       </main>
       <Footer />
     </div>
