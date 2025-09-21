@@ -5,7 +5,7 @@ const app=express();
 
 
 app.use(cors({
-  origin: 'http://localhost:8080', // Your frontend URL
+  origin: 'https://mindcare-1-cw05.onrender.com', // Your frontend URL
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
