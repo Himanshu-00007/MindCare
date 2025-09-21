@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Header from "../Header";
-import StudentHeader from "../StudentHeader";
 
 // 🔹 Snackbar Component
 const Snackbar = ({
@@ -40,17 +38,26 @@ const AuthPage: React.FC = () => {
   const [tab, setTab] = useState<"login" | "register">("login");
   const [role, setRole] = useState<"student" | "counsellor" | "admin">("student");
   const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
+  const [snackbar, setSnackbar] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const [studentData, setStudentData] = useState({
-    name: "", email: "", mobile_number: "", password: "", age: "", gender: "", course: "", institution: ""
+    name: "",
+    email: "",
+    mobile_number: "",
+    password: "",
+    age: "",
+    gender: "",
+    course: "",
+    institution: "",
   });
 
   const [counsellorData, setCounsellorData] = useState({
-    name: "", email: "", password: "", designation: "", experience: "", institution: ""
+    name: "",
+    email: "",
+    password: "",
+    designation: "",
+    experience: "",
+    institution: "",
   });
 
   const [loginData, setLoginData] = useState({ email: "", password: "" });
@@ -75,11 +82,33 @@ const AuthPage: React.FC = () => {
     if (selectedRole === "admin") setTab("login");
   };
 
+  // 🔹 Password strength validation
+  const isPasswordStrong = (password: string) => {
+    const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
+    return regex.test(password);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      const password =
+        tab === "login"
+          ? loginData.password
+          : role === "student"
+          ? studentData.password
+          : counsellorData.password;
+
+      if (!isPasswordStrong(password)) {
+        showSnackbar(
+          "Password must be at least 8 characters, include an uppercase letter, a number, and a special character!",
+          "error"
+        );
+        setLoading(false);
+        return;
+      }
+
       if (tab === "register") {
         // Registration
         const url = `http://localhost:5000/api/v1/${role}s/${role}-register`;
@@ -128,14 +157,15 @@ const AuthPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 flex items-center justify-center px-4">
-      
       <Card className="w-full max-w-md shadow-xl bg-white/90 backdrop-blur-lg rounded-2xl">
         <CardContent className="p-8">
           <h1 className="text-3xl font-bold text-center text-indigo-600 mb-4">MindCare Auth</h1>
           <Tabs value={tab} onValueChange={(v: any) => setTab(v)} className="mt-4">
             <TabsList className="grid grid-cols-2 w-full">
               <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register" disabled={role === "admin"}>Register</TabsTrigger>
+              <TabsTrigger value="register" disabled={role === "admin"}>
+                Register
+              </TabsTrigger>
             </TabsList>
 
             <form onSubmit={handleSubmit} className="space-y-4 mt-6">

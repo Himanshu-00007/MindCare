@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import {
-  Menu,
-  X,
-  BarChart3,
-  Upload,
-  Brain,
-  User,
-} from "lucide-react";
+import { Menu, X, BarChart3, Upload, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
@@ -97,8 +90,7 @@ const AdminHeader = () => {
   const menuItems = [
     { icon: BarChart3, label: "Dashboard", path: "/admin-dashboard" },
     { icon: Upload, label: "Media Upload", path: "/media-dashboard" },
-    { icon: Brain, label: "AI Insights", path: "/ai-insights" },
-    { icon: User, label: "Resource Hub", path: "/resource-hub" }, // New button
+    { icon: User, label: "Resource Hub", path: "/resource-hub" }, // Resource Hub button
   ];
 
   return (

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import StudentHeader from "../StudentHeader";
 
 interface Counsellor {
   _id: string;
@@ -178,6 +179,9 @@ const StudentBookingPage: React.FC = () => {
   return (
     <div className="min-h-screen relative flex flex-col items-center p-6 overflow-hidden bg-gradient-to-br from-teal-100 via-lavender-100 to-blue-100">
       {/* Floating ambient orbs */}
+      <div className="relative z-20 w-full  mb-3 px-4 md:px-12">
+        <StudentHeader />
+      </div>
       <div className="fixed top-20 left-20 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob"></div>
       <div className="fixed top-40 right-20 w-72 h-72 bg-lavender-300 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob animation-delay-2000"></div>
       <div className="fixed bottom-20 left-40 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-2xl opacity-10 animate-blob animation-delay-4000"></div>

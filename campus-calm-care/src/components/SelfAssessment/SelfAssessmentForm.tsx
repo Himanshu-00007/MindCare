@@ -39,75 +39,74 @@ function SelfAssessmentForm() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!studentId) {
-      showSnackbar("Student ID is missing! Please log in again.", 'error');
-      return;
-    }
+  if (!studentId) {
+    showSnackbar("Student ID is missing! Please log in again.", 'error');
+    return;
+  }
 
-    // Validate that all questions are answered
-    const unansweredSections = [];
-    if (phq9Responses.includes(-1)) unansweredSections.push('PHQ-9 Depression Assessment');
-    if (gad7Responses.includes(-1)) unansweredSections.push('GAD-7 Anxiety Assessment');
-    if (ghqResponses.includes(-1)) unansweredSections.push('GHQ General Health Assessment');
+  // Validate answers
+  const unansweredSections = [];
+  if (phq9Responses.includes(-1)) unansweredSections.push('PHQ-9 Depression Assessment');
+  if (gad7Responses.includes(-1)) unansweredSections.push('GAD-7 Anxiety Assessment');
+  if (ghqResponses.includes(-1)) unansweredSections.push('GHQ General Health Assessment');
 
-    if (unansweredSections.length > 0) {
-      showSnackbar(
-        `Please complete all questions in: ${unansweredSections.join(', ')}`, 
-        'warning'
-      );
-      return;
-    }
+  if (unansweredSections.length > 0) {
+    showSnackbar(
+      `Please complete all questions in: ${unansweredSections.join(', ')}`, 
+      'warning'
+    );
+    return;
+  }
 
-    const phq9Score = phq9Responses.reduce((a, b) => a + b, 0);
-    const gad7Score = gad7Responses.reduce((a, b) => a + b, 0);
-    const ghqScore = ghqResponses.reduce((a, b) => a + b, 0);
+  const phq9Score = phq9Responses.reduce((a, b) => a + b, 0);
+  const gad7Score = gad7Responses.reduce((a, b) => a + b, 0);
+  const ghqScore = ghqResponses.reduce((a, b) => a + b, 0);
 
-    const token = localStorage.getItem("Token");
-    if (!token) {
-      showSnackbar("Authentication required! Please log in again.", 'error');
-      return;
-    }
+  const token = localStorage.getItem("Token");
+  if (!token) {
+    showSnackbar("Authentication required! Please log in again.", 'error');
+    return;
+  }
 
-    console.log("Submitting self-assessment", {
-      studentId,
-      PHQ9: phq9Score,
-      GAD7: gad7Score,
-      GHQ: ghqScore,
-      token,
-    });
+  setLoading(true);
 
-    setLoading(true);
+  try {
+    await axios.patch(
+      `http://localhost:5000/api/v1/students/self-assessment/${studentId}`,
+      { PHQ9: phq9Score, GAD7: gad7Score, GHQ: ghqScore },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
 
-    try {
-      await axios.patch(
-        `http://localhost:5000/api/v1/students/self-assessment/${studentId}`,
-        { PHQ9: phq9Score, GAD7: gad7Score, GHQ: ghqScore },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        }
-      );
-      showSnackbar("✅ Self assessment completed successfully! Your responses have been saved.", 'success');
-setTimeout(() => {
-  navigate("/student-dashboard");
-}, 1000);
-      setPhq9Responses(Array(9).fill(-1));
-      setGad7Responses(Array(7).fill(-1));
-      setGhqResponses(Array(5).fill(-1));
-    
-      
-    } catch (error: any) {
-      console.error(error);
-      const errorMessage = error.response?.data?.message || "Failed to save assessment. Please try again.";
-      showSnackbar(`❌ ${errorMessage}`, 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
+    showSnackbar("✅ Self assessment completed successfully!", 'success');
+
+    // ✅ Redirect to ResultsPage with scores
+    setTimeout(() => {
+      navigate("/results", { 
+        state: { phq9Score, gad7Score, ghqScore } 
+      });
+    }, 1000);
+
+    // reset state
+    setPhq9Responses(Array(9).fill(-1));
+    setGad7Responses(Array(7).fill(-1));
+    setGhqResponses(Array(5).fill(-1));
+
+  } catch (error: any) {
+    console.error(error);
+    const errorMessage = error.response?.data?.message || "Failed to save assessment. Please try again.";
+    showSnackbar(`❌ ${errorMessage}`, 'error');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const renderQuestionSection = (
     questions: string[],

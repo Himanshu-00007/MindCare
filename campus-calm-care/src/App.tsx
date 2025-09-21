@@ -22,6 +22,7 @@ import SelfAssessmentForm from "./components/SelfAssessment/SelfAssessmentForm";
 import CounsellorDashboard from "./components/Dashboard/CounsellorDashboard";
 import AdminDashboard from "./components/Dashboard/AdminDashboard";
 import ResourceHub from "./components/ResourceHub/ResourceHub";
+import ResultsPage from "./components/SelfAssessment/ResultsPage";
 
 
 // Initialize react-query
@@ -42,7 +43,7 @@ const router = createBrowserRouter(
     {path: "/self-assessment", element: <SelfAssessmentForm />},
     {path: "/counsellor-dashboard", element: <CounsellorDashboard />},
     {path: "/resource-hub", element: <ResourceHub />},
-
+    {path: "/results", element: <ResultsPage />},
     { path: "*", element: <NotFound /> },
     
   ],
