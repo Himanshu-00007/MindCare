@@ -2,16 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-
-import StudentBookingPage from "./components/booking/StudentBookingPage"
+import StudentBookingPage from "./components/booking/StudentBookingPage";
 import CounsellorBookingPage from "./components/booking/CounsellorBookingPage";
 import StudentChatPage from "./components/chat/StudentChatPage";
 import AuthPage from "./components/Authentication/AuthPage";
@@ -24,39 +20,32 @@ import AdminDashboard from "./components/Dashboard/AdminDashboard";
 import ResourceHub from "./components/ResourceHub/ResourceHub";
 import ResultsPage from "./components/SelfAssessment/ResultsPage";
 
-
 // Initialize react-query
 const queryClient = new QueryClient();
 
-// Define the router with future flags
-const router = createBrowserRouter(
-  [
-    { path: "/", element: <Index /> },
-    { path: "/auth", element: <AuthPage /> },
-    { path: "/chat", element: <StudentChatPage /> },
-    {path: "/student-booking", element: <StudentBookingPage/>},
-    {path: "/counsellor-booking", element: <CounsellorBookingPage />},
-    {path: "/media-dashboard", element: <MediaDashboard />},
-    {path: "/admin-dashboard", element: <AdminDashboard />},
-    {path: "/student-dashboard", element: <StudentHeader />},
-    {path: "/student-media", element: <StudentMediaDashboard />},
-    {path: "/self-assessment", element: <SelfAssessmentForm />},
-    {path: "/counsellor-dashboard", element: <CounsellorDashboard />},
-    {path: "/resource-hub", element: <ResourceHub />},
-    {path: "/results", element: <ResultsPage />},
-    { path: "*", element: <NotFound /> },
-    
-  ],
-  
-);
-
 const App = () => (
-  
-      <RouterProvider
-      router={router}
-      future={{ v7_startTransition: true }}
-    />
-    
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/chat" element={<StudentChatPage />} />
+          <Route path="/student-booking" element={<StudentBookingPage />} />
+          <Route path="/counsellor-booking" element={<CounsellorBookingPage />} />
+          <Route path="/media-dashboard" element={<MediaDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/student-dashboard" element={<StudentHeader />} />
+          <Route path="/student-media" element={<StudentMediaDashboard />} />
+          <Route path="/self-assessment" element={<SelfAssessmentForm />} />
+          <Route path="/counsellor-dashboard" element={<CounsellorDashboard />} />
+          <Route path="/resource-hub" element={<ResourceHub />} />
+          <Route path="/results" element={<ResultsPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </TooltipProvider>
+  </QueryClientProvider>
 );
 
 export default App;
