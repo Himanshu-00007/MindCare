@@ -74,7 +74,7 @@ function SelfAssessmentForm() {
 
   try {
     await axios.patch(
-      `http://localhost:5000/api/v1/students/self-assessment/${studentId}`,
+      `https://mindcare-lf3g.onrender.com/api/v1/students/self-assessment/${studentId}`,
       { PHQ9: phq9Score, GAD7: gad7Score, GHQ: ghqScore },
       {
         headers: {

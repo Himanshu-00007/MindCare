@@ -45,7 +45,7 @@ const MediaUpload = () => {
       formData.append("videoFile", mediaFile);
       if (!isImage) formData.append("language", language); // only append language for videos
 
-      await axios.post("http://localhost:5000/api/v1/videos/video-upload", formData, {
+      await axios.post("https://mindcare-lf3g.onrender.com/api/v1/videos/video-upload", formData, {
         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
       });
 

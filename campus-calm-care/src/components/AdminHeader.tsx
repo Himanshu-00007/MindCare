@@ -76,7 +76,7 @@ const AdminHeader = () => {
       const token = localStorage.getItem("Token");
       if (!token) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/admins/me", {
+        const res = await axios.get("https://mindcare-lf3g.onrender.com/api/v1/admins/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAdminName(res.data.name);

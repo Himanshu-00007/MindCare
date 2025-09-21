@@ -40,7 +40,7 @@ const CounsellorBookingPage = () => {
   const fetchBookings = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/v1/bookings/counsellor-bookings",
+        "https://mindcare-lf3g.onrender.com/api/v1/bookings/counsellor-bookings",
         getConfig()
       );
       setBookings(res.data.bookings);
@@ -57,7 +57,7 @@ const CounsellorBookingPage = () => {
   const cancelBookingAsCounsellor = async (id) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/v1/bookings/counsellor-cancel-booking/${id}`,
+        `https://mindcare-lf3g.onrender.com/api/v1/bookings/counsellor-cancel-booking/${id}`,
         getConfig()
       );
       toast.success("Booking cancelled successfully by you");
@@ -245,7 +245,7 @@ const CounsellorBookingPage = () => {
                     onClick={async () => {
                       try {
                         const res = await axios.patch(
-                          `http://localhost:5000/api/v1/bookings/confirm/${b._id}`,
+                          `https://mindcare-lf3g.onrender.com/api/v1/bookings/confirm/${b._id}`,
                           {},
                           getConfig()
                         );

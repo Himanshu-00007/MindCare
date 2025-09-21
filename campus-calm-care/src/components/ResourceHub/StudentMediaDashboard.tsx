@@ -40,7 +40,7 @@ const StudentMediaDashboard = () => {
   const token = localStorage.getItem("Token");
 
   const api = axios.create({
-    baseURL: "http://localhost:5000/api/v1/videos",
+    baseURL: "https://mindcare-lf3g.onrender.com/api/v1/videos",
     headers: { Authorization: `Bearer ${token}` },
   });
 

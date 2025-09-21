@@ -30,7 +30,7 @@ const ResourceHub = () => {
 
   const fetchMedia = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/v1/videos/get-all-videos");
+      const res = await axios.get("https://mindcare-lf3g.onrender.com/api/v1/videos/get-all-videos");
       const mappedVideos = res.data.videos
         .map((v: any) => ({
           ...v,
@@ -69,7 +69,7 @@ const ResourceHub = () => {
 
   const handleLike = async (id: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/v1/videos/like-video/${id}`, null, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.patch(`https://mindcare-lf3g.onrender.com/api/v1/videos/like-video/${id}`, null, { headers: { Authorization: `Bearer ${token}` } });
       fetchMedia();
     } catch {
       showSnackbar("Failed to like", "error");
@@ -78,7 +78,7 @@ const ResourceHub = () => {
 
   const handleDislike = async (id: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/v1/videos/dislike-video/${id}`, null, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.patch(`https://mindcare-lf3g.onrender.com/api/v1/videos/dislike-video/${id}`, null, { headers: { Authorization: `Bearer ${token}` } });
       fetchMedia();
     } catch {
       showSnackbar("Failed to dislike", "error");
@@ -87,7 +87,7 @@ const ResourceHub = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:5000/api/v1/videos/video-delete/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`https://mindcare-lf3g.onrender.com/api/v1/videos/video-delete/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       fetchMedia();
       showSnackbar("Media deleted successfully", "success");
     } catch {

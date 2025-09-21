@@ -39,7 +39,7 @@ const StudentChatPage: React.FC = () => {
       return;
     }
 
-    axios.get("http://localhost:5000/api/v1/chatbot/history", {
+    axios.get("https://mindcare-lf3g.onrender.com/api/v1/chatbot/history", {
       headers: { Authorization: "Bearer " + token }
     })
     .then(res => setChatHistory(res.data.messages || []))
@@ -59,7 +59,7 @@ const StudentChatPage: React.FC = () => {
 
     try {
       const res = await axios.post<ChatResponse>(
-        "http://localhost:5000/api/v1/chatbot/chat",
+        "https://mindcare-lf3g.onrender.com/api/v1/chatbot/chat",
         { message },
         { headers: { Authorization: "Bearer " + token } }
       );

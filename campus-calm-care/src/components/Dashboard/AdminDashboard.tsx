@@ -51,19 +51,19 @@ const AdminDashboard = () => {
       const [studentRes, counsellorRes, appointmentsRes, trendRes] =
         await Promise.all([
           axios.get(
-            "http://localhost:5000/api/v1/admins/student-stats",
+            "https://mindcare-lf3g.onrender.com/api/v1/admins/student-stats",
             getConfig()
           ),
           axios.get(
-            "http://localhost:5000/api/v1/admins/counsellor-stats",
+            "https://mindcare-lf3g.onrender.com/api/v1/admins/counsellor-stats",
             getConfig()
           ),
           axios.get(
-            "http://localhost:5000/api/v1/admins/appointments-summary",
+            "https://mindcare-lf3g.onrender.com/api/v1/admins/appointments-summary",
             getConfig()
           ),
           axios.get(
-            "http://localhost:5000/api/v1/admins/student-statistics-trend",
+            "https://mindcare-lf3g.onrender.com/api/v1/admins/student-statistics-trend",
             getConfig()
           ),
         ]);

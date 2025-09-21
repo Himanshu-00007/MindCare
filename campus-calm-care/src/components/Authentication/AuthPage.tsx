@@ -15,22 +15,20 @@ const Snackbar = ({
   message: string;
   type: "success" | "error";
   onClose: () => void;
-}) => {
-  return (
-    <div
-      className={`fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white transition-all duration-300 z-50 ${
-        type === "success" ? "bg-green-500" : "bg-red-500"
-      }`}
-    >
-      <div className="flex items-center justify-between space-x-4">
-        <span>{message}</span>
-        <button onClick={onClose} className="text-white font-bold">
-          ×
-        </button>
-      </div>
+}) => (
+  <div
+    className={`fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white transition-all duration-300 z-50 ${
+      type === "success" ? "bg-green-500" : "bg-red-500"
+    }`}
+  >
+    <div className="flex items-center justify-between space-x-4">
+      <span>{message}</span>
+      <button onClick={onClose} className="text-white font-bold">
+        ×
+      </button>
     </div>
-  );
-};
+  </div>
+);
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -82,41 +80,31 @@ const AuthPage: React.FC = () => {
     if (selectedRole === "admin") setTab("login");
   };
 
-  // 🔹 Password strength validation
-  const isPasswordStrong = (password: string) => {
-    const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
-    return regex.test(password);
-  };
+  // 🔹 Password minimum 8 characters
+  const isPasswordStrong = (password: string) => password.length >= 8;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // 🔹 Simplified password selection
       const password =
-        tab === "login"
-          ? loginData.password
-          : role === "student"
-          ? studentData.password
-          : counsellorData.password;
+        tab === "login" ? loginData.password : role === "student" ? studentData.password : counsellorData.password;
 
       if (!isPasswordStrong(password)) {
-        showSnackbar(
-          "Password must be at least 8 characters, include an uppercase letter, a number, and a special character!",
-          "error"
-        );
+        showSnackbar("Password must be at least 8 characters long!", "error");
         setLoading(false);
         return;
       }
 
       if (tab === "register") {
-        // Registration
-        const url = `http://localhost:5000/api/v1/${role}s/${role}-register`;
+        const url = `https://mindcare-lf3g.onrender.com/api/v1/${role}s/${role}-register`;
         const payload = role === "student" ? studentData : counsellorData;
         await axios.post(url, payload, { withCredentials: true });
 
         // Auto-login after registration
-        const loginUrl = `http://localhost:5000/api/v1/${role}s/${role}-login`;
+        const loginUrl = `https://mindcare-lf3g.onrender.com/api/v1/${role}s/${role}-login`;
         const loginPayload = { email: payload.email, password: payload.password };
         const res = await axios.post(loginUrl, loginPayload, { withCredentials: true });
 
@@ -132,8 +120,7 @@ const AuthPage: React.FC = () => {
           else if (role === "admin") navigate("/admin-dashboard");
         }, 1000);
       } else {
-        // Normal login
-        const url = `http://localhost:5000/api/v1/${role}s/${role}-login`;
+        const url = `https://mindcare-lf3g.onrender.com/api/v1/${role}s/${role}-login`;
         const res = await axios.post(url, loginData, { withCredentials: true });
 
         localStorage.setItem("Token", res.data.Token);

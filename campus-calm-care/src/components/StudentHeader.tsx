@@ -76,7 +76,7 @@ const StudentHeader = () => {
       const token = localStorage.getItem("Token");
       if (!token) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/v1/students/me", {
+        const res = await axios.get("https://mindcare-lf3g.onrender.com/api/v1/students/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStudentName(res.data.name);

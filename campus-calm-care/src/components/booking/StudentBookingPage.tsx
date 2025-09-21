@@ -64,7 +64,7 @@ const StudentBookingPage: React.FC = () => {
   const fetchCounsellors = async () => {
     try {
       const res = await axios.get<{ counsellors: Counsellor[] }>(
-        "http://localhost:5000/api/v1/counsellors/list",
+        "https://mindcare-lf3g.onrender.com/api/v1/counsellors/list",
         getConfig()
       );
       setCounsellors(res.data.counsellors);
@@ -77,7 +77,7 @@ const StudentBookingPage: React.FC = () => {
   const fetchMyBooking = async () => {
     try {
       const res = await axios.get<{ booking: { _id: string; counsellor: Counsellor; status: string } }>(
-        "http://localhost:5000/api/v1/bookings/my-booking",
+        "https://mindcare-lf3g.onrender.com/api/v1/bookings/my-booking",
         getConfig()
       );
 
@@ -112,7 +112,7 @@ const StudentBookingPage: React.FC = () => {
 
     try {
       const res = await axios.post<{ booking: { _id: string; status: string } }>(
-        "http://localhost:5000/api/v1/bookings/create-booking",
+        "https://mindcare-lf3g.onrender.com/api/v1/bookings/create-booking",
         {
           counsellorId: selectedCounsellor._id,
           start,
@@ -149,7 +149,7 @@ const StudentBookingPage: React.FC = () => {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/v1/bookings/cancel-booking/${bookingId}`,
+        `https://mindcare-lf3g.onrender.com/api/v1/bookings/cancel-booking/${bookingId}`,
         getConfig()
       );
 
