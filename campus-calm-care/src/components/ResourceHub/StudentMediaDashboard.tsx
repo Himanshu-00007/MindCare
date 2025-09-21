@@ -29,10 +29,7 @@ const StudentMediaDashboard = () => {
   const [mediaList, setMediaList] = useState<Media[]>([]);
   const [filteredMedia, setFilteredMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState(true);
-  const [snackbar, setSnackbar] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
+  const [snackbar, setSnackbar] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
   const [typeFilter, setTypeFilter] = useState("all");
   const [languageFilter, setLanguageFilter] = useState("all");
@@ -48,19 +45,19 @@ const StudentMediaDashboard = () => {
     try {
       setLoading(true);
       const res = await api.get("/get-all-videos");
+
       const mapped = res.data.videos.map((v: any) => ({
         ...v,
-        mediaFile: v.videoFile,
-        type: v.videoFile.match(/\.(mp4|webm|ogg)$/) ? "video" : "image",
+        // Force HTTPS to avoid Mixed Content
+        mediaFile: v.videoFile?.replace(/^http:/, "https:") || "",
+        type: v.videoFile?.match(/\.(mp4|webm|ogg)$/) ? "video" : "image",
         language: v.language || "English",
       }));
+
       setMediaList(mapped);
       setFilteredMedia(mapped);
     } catch (error: any) {
-      showSnackbar(
-        error.response?.data?.message || "Failed to load media",
-        "error"
-      );
+      showSnackbar(error.response?.data?.message || "Failed to load media", "error");
     } finally {
       setLoading(false);
     }
@@ -80,8 +77,7 @@ const StudentMediaDashboard = () => {
 
     if (languageFilter !== "all") {
       filtered = filtered.filter(
-        (m) =>
-          m.type === "image" || (m.type === "video" && m.language === languageFilter)
+        (m) => m.type === "image" || (m.type === "video" && m.language === languageFilter)
       );
     }
 
@@ -120,10 +116,7 @@ const StudentMediaDashboard = () => {
         prev.map((m) => (m._id === id ? { ...m, views: m.views + 1 } : m))
       );
     } catch (error: any) {
-      console.error(
-        "View increment failed",
-        error.response?.data?.message || error.message
-      );
+      console.error("View increment failed", error.response?.data?.message || error.message);
     }
   };
 
