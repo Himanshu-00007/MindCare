@@ -27,7 +27,7 @@ const MediaUpload = () => {
     setMediaFile(file);
     if (file) {
       const fileType = file.type;
-      setIsImage(fileType.startsWith("image/")); // true if image, false if video
+      setIsImage(fileType.startsWith("image/"));
     } else {
       setIsImage(false);
     }
@@ -43,18 +43,34 @@ const MediaUpload = () => {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("videoFile", mediaFile);
-      if (!isImage) formData.append("language", language); // only append language for videos
+      if (!isImage) formData.append("language", language);
 
-      await axios.post("https://mindcare-lf3g.onrender.com/api/v1/videos/video-upload", formData, {
-        headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.post(
+        "https://mindcare-lf3g.onrender.com/api/v1/videos/video-upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Ensure HTTPS URL in response
+      const uploadedMedia = res.data.media;
+      if (uploadedMedia?.mediaFile?.startsWith("http://")) {
+        uploadedMedia.mediaFile = uploadedMedia.mediaFile.replace("http://", "https://");
+      }
 
       showSnackbar("Media uploaded successfully!", "success");
 
       // Clear form
-      setTitle(""); setDescription(""); setMediaFile(null); setIsImage(false);
+      setTitle("");
+      setDescription("");
+      setMediaFile(null);
+      setIsImage(false);
 
-      // Redirect to Resource Hub
+      // Redirect
       navigate("/resource-hub");
     } catch (error: any) {
       showSnackbar(error.response?.data?.message || "Upload failed", "error");
@@ -72,7 +88,6 @@ const MediaUpload = () => {
         <Input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <Input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required />
 
-        {/* Show language dropdown only if selected file is not an image */}
         {!isImage && (
           <Select value={language} onValueChange={setLanguage}>
             <SelectTrigger className="w-full"><SelectValue placeholder="Select Language" /></SelectTrigger>

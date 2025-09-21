@@ -28,16 +28,26 @@ const ResourceHub = () => {
   const token = localStorage.getItem("Token");
   const role = localStorage.getItem("role");
 
+  const showSnackbar = (message: string, type: "success" | "error") => {
+    setSnackbar({ message, type });
+    setTimeout(() => setSnackbar(null), 3000);
+  };
+
   const fetchMedia = async () => {
     try {
       const res = await axios.get("https://mindcare-lf3g.onrender.com/api/v1/videos/get-all-videos");
       const mappedVideos = res.data.videos
-        .map((v: any) => ({
-          ...v,
-          mediaFile: v.videoFile,
-          type: v.videoFile.match(/\.(mp4|webm|ogg)$/) ? "video" : "image",
-          language: v.language || "English",
-        }))
+        .map((v: any) => {
+          let mediaUrl = v.videoFile || "";
+          if (mediaUrl.startsWith("http://")) mediaUrl = mediaUrl.replace("http://", "https://");
+
+          return {
+            ...v,
+            mediaFile: mediaUrl,
+            type: mediaUrl.match(/\.(mp4|webm|ogg)$/) ? "video" : "image",
+            language: v.language || "English",
+          };
+        })
         .filter((v: any) => v.type !== null);
       setMediaList(mappedVideos);
       setFilteredMedia(mappedVideos);
@@ -61,11 +71,6 @@ const ResourceHub = () => {
 
     setFilteredMedia(filtered);
   }, [languageFilter, typeFilter, mediaList]);
-
-  const showSnackbar = (message: string, type: "success" | "error") => {
-    setSnackbar({ message, type });
-    setTimeout(() => setSnackbar(null), 3000);
-  };
 
   const handleLike = async (id: string) => {
     try {
@@ -97,7 +102,6 @@ const ResourceHub = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
-      {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/20 to-orange-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -105,26 +109,21 @@ const ResourceHub = () => {
       </div>
 
       <div className="relative z-10 pt-28 px-8">
-        {/* Fixed spacing to prevent AdminHeader overlap */}
         <AdminHeader />
 
-        {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 animate-pulse">
             Resource Hub
           </h1>
-          
           <div className="w-32 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-6 rounded-full"></div>
         </div>
 
-        {/* Filters Section */}
         <div className="max-w-6xl mx-auto mb-12">
           <div className="bg-white/70 backdrop-blur-md rounded-3xl p-8 shadow-xl border border-white/20">
             <div className="flex items-center gap-3 mb-6">
               <Filter className="w-6 h-6 text-blue-600" />
               <h2 className="text-2xl font-bold text-slate-800">Filter Content</h2>
             </div>
-
             <div className="flex flex-col md:flex-row justify-center gap-6">
               <div className="relative">
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
@@ -168,29 +167,18 @@ const ResourceHub = () => {
           </div>
         </div>
 
-        {/* Media Grid */}
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {filteredMedia.map((media) => (
-              <Card 
-                key={media._id} 
-                className="bg-white/80 backdrop-blur-md shadow-xl rounded-3xl overflow-hidden border border-white/20"
-              >
+              <Card key={media._id} className="bg-white/80 backdrop-blur-md shadow-xl rounded-3xl overflow-hidden border border-white/20">
                 <div className="relative overflow-hidden">
                   {media.type === "video" ? (
                     <video className="w-full h-56 object-cover" controls>
-                      <source src={media.mediaFile} type="video/mp4" />
+                      <source src={media.mediaFile.startsWith("http://") ? media.mediaFile.replace("http://", "https://") : media.mediaFile} type="video/mp4" />
                     </video>
                   ) : (
-                    <div
-                      className="relative w-full h-56 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 cursor-pointer overflow-hidden"
-                      onClick={() => setLightboxImage(media.mediaFile)}
-                    >
-                      <img
-                        src={media.mediaFile}
-                        alt={media.title}
-                        className="max-h-full max-w-full object-cover"
-                      />
+                    <div className="relative w-full h-56 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 cursor-pointer overflow-hidden" onClick={() => setLightboxImage(media.mediaFile)}>
+                      <img src={media.mediaFile.startsWith("http://") ? media.mediaFile.replace("http://", "https://") : media.mediaFile} alt={media.title} className="max-h-full max-w-full object-cover" />
                     </div>
                   )}
                 </div>
@@ -219,10 +207,7 @@ const ResourceHub = () => {
                   </div>
 
                   {role === "admin" ? (
-                    <Button 
-                      onClick={() => handleDelete(media._id)} 
-                      className="w-full bg-red-500 text-white font-semibold py-3 rounded-xl shadow transition-all duration-300"
-                    >
+                    <Button onClick={() => handleDelete(media._id)} className="w-full bg-red-500 text-white font-semibold py-3 rounded-xl shadow transition-all duration-300">
                       <Trash2 className="w-4 h-4 mr-2" />
                       Delete Media
                     </Button>
@@ -252,45 +237,22 @@ const ResourceHub = () => {
           )}
         </div>
 
-        {/* Lightbox Modal */}
         {lightboxImage && (
-          <div
-            className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 cursor-pointer"
-            onClick={() => setLightboxImage(null)}
-          >
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 cursor-pointer" onClick={() => setLightboxImage(null)}>
             <div className="relative max-w-5xl max-h-5xl p-4">
-              <img 
-                src={lightboxImage} 
-                alt="Preview" 
-                className="max-h-full max-w-full rounded-2xl shadow-2xl"
-              />
-              <button 
-                onClick={() => setLightboxImage(null)}
-                className="absolute -top-4 -right-4 w-12 h-12 bg-white text-black rounded-full flex items-center justify-center font-bold shadow-lg"
-              >
-                ×
-              </button>
+              <img src={lightboxImage.startsWith("http://") ? lightboxImage.replace("http://", "https://") : lightboxImage} alt="Preview" className="max-h-full max-w-full rounded-2xl shadow-2xl" />
+              <button onClick={() => setLightboxImage(null)} className="absolute -top-4 -right-4 w-12 h-12 bg-white text-black rounded-full flex items-center justify-center font-bold shadow-lg">×</button>
             </div>
           </div>
         )}
 
-        {/* Snackbar */}
         {snackbar && (
-          <div className={`fixed bottom-8 right-8 px-6 py-4 rounded-2xl shadow-2xl text-white backdrop-blur-md transform transition-all duration-500 ${
-            snackbar.type === "success" 
-              ? "bg-green-500" 
-              : "bg-red-500"
-          }`}>
+          <div className={`fixed bottom-8 right-8 px-6 py-4 rounded-2xl shadow-2xl text-white backdrop-blur-md transform transition-all duration-500 ${snackbar.type === "success" ? "bg-green-500" : "bg-red-500"}`}>
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="font-semibold">{snackbar.message}</span>
               </div>
-              <button 
-                onClick={() => setSnackbar(null)} 
-                className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center font-bold text-white transition-colors duration-200"
-              >
-                ×
-              </button>
+              <button onClick={() => setSnackbar(null)} className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center font-bold text-white transition-colors duration-200">×</button>
             </div>
           </div>
         )}
