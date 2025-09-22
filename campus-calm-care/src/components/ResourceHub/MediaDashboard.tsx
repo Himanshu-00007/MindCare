@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import AdminHeader from "../AdminHeader";
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +18,10 @@ const MediaUpload = () => {
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [language, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
   const [isImage, setIsImage] = useState(false);
 
   const token = localStorage.getItem("Token");
@@ -56,10 +65,12 @@ const MediaUpload = () => {
         }
       );
 
-      // Ensure HTTPS URL in response
       const uploadedMedia = res.data.media;
       if (uploadedMedia?.mediaFile?.startsWith("http://")) {
-        uploadedMedia.mediaFile = uploadedMedia.mediaFile.replace("http://", "https://");
+        uploadedMedia.mediaFile = uploadedMedia.mediaFile.replace(
+          "http://",
+          "https://"
+        );
       }
 
       showSnackbar("Media uploaded successfully!", "success");
@@ -82,15 +93,40 @@ const MediaUpload = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <AdminHeader />
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Upload Media</h1>
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
+        Upload Media
+      </h1>
 
-      <form onSubmit={handleUpload} className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md space-y-4">
-        <Input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <Input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required />
+      <form
+        onSubmit={handleUpload}
+        className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md space-y-4"
+      >
+        <Input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+        <Input
+          type="text"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
 
         {!isImage && (
-          <Select value={language} onValueChange={setLanguage}>
-            <SelectTrigger className="w-full"><SelectValue placeholder="Select Language" /></SelectTrigger>
+          <Select
+            value={language}
+            onValueChange={(val) => {
+              setLanguage(val);
+              console.log("Selected language:", val);
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Language" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="English">English</SelectItem>
               <SelectItem value="Hindi">Hindi</SelectItem>
@@ -108,14 +144,25 @@ const MediaUpload = () => {
           required
         />
 
-        <Button type="submit" className="w-full" disabled={loading}>{loading ? "Uploading..." : "Upload Media"}</Button>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Uploading..." : "Upload Media"}
+        </Button>
       </form>
 
       {snackbar && (
-        <div className={`fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white ${snackbar.type === "success" ? "bg-green-500" : "bg-red-500"}`}>
+        <div
+          className={`fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white ${
+            snackbar.type === "success" ? "bg-green-500" : "bg-red-500"
+          }`}
+        >
           <div className="flex items-center justify-between space-x-4">
             <span>{snackbar.message}</span>
-            <button onClick={() => setSnackbar(null)} className="font-bold text-white">×</button>
+            <button
+              onClick={() => setSnackbar(null)}
+              className="font-bold text-white"
+            >
+              ×
+            </button>
           </div>
         </div>
       )}
