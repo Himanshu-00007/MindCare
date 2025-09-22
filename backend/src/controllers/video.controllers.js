@@ -5,7 +5,7 @@ import { cloudinaryDelete, cloudinaryUpload } from "../utils/cloudinary.js";
 // Upload video (using buffer)
 const uploadVideo = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, language } = req.body; // 👈 language bhi lo
     const file = req.files?.videoFile?.[0];
 
     if (!file) {
@@ -20,6 +20,7 @@ const uploadVideo = async (req, res) => {
     const video = await Video.create({
       title,
       description,
+      language: language || "English", // 👈 yaha save karo
       videoFile: videoFile.url,
       videoFileId: videoFile.public_id,
       owner: req.user._id,

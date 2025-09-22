@@ -4,31 +4,29 @@ import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 const videoSchema = mongoose.Schema(
     {
         videoFile: {
-            type: String, //cloudinary url
+            type: String, // cloudinary url
             required: true
         },
         videoFileId: {
-            type: String, //cloudinary id
+            type: String, // cloudinary id
             required: true
         },
-        
         title: {
-            type: String, 
+            type: String,
             required: true
         },
         description: {
-            type: String, 
+            type: String,
             required: true
         },
         duration: {
-            type: Number, 
-            default:0,
+            type: Number,
+            default: 0,
         },
         views: {
             type: Number,
             default: 0
         },
-
         isPublished: {
             type: Boolean,
             default: true
@@ -37,33 +35,40 @@ const videoSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Student"
         },
-        like:{
-            type:Number,
-            default:0,
+        like: {
+            type: Number,
+            default: 0,
         },
-        dislike:{
-            type:Number,
-            default:0,
+        dislike: {
+            type: Number,
+            default: 0,
         },
-        likedBy:[
+        likedBy: [
             {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"Student",
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Student",
             }
-                ],
-        dislikedBy:[
+        ],
+        dislikedBy: [
             {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"Student",
-            },
-                ]
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Student",
+            }
+        ],
 
-    }, 
+        // ✅ Add this new field
+        language: {
+            type: String,
+            enum: ["English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam", "Bengali", "Gujarati", "Marathi", "Punjabi", "Other"],
+            default: "English"
+        }
+
+    },
     {
         timestamps: true
     }
-)
+);
 
-videoSchema.plugin(mongooseAggregatePaginate)
+videoSchema.plugin(mongooseAggregatePaginate);
 
-export const Video = mongoose.model("Video", videoSchema)
+export const Video = mongoose.model("Video", videoSchema);
