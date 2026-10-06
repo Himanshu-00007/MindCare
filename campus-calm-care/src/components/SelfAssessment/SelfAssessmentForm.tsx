@@ -78,15 +78,15 @@ function SelfAssessmentForm() {
     const unansweredSections: string[] = [];
 
     if (phq9Responses.includes(-1)) {
-      unansweredSections.push("PHQ-9 Depression Assessment");
+      unansweredSections.push("Depression Assessment");
     }
 
     if (gad7Responses.includes(-1)) {
-      unansweredSections.push("GAD-7 Anxiety Assessment");
+      unansweredSections.push("Anxiety Assessment");
     }
 
     if (ghqResponses.includes(-1)) {
-      unansweredSections.push("GHQ General Health Assessment");
+      unansweredSections.push("General Health Assessment");
     }
 
     if (unansweredSections.length > 0) {
