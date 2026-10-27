@@ -71,20 +71,64 @@ Student info:
 // 🔹 Call Gemini API
 async function callGemini(prompt, history = []) {
   const GEMINI_KEY = process.env.GEMINI_API_KEY;
-  if (!GEMINI_KEY) throw new Error("GEMINI_API_KEY not set");
 
-  const historyText = history.map(m => `${m.role === "user" ? "Student" : "AI"}: ${m.content}`).join("\n");
+  if (!GEMINI_KEY) {
+    throw new Error("GEMINI_API_KEY is not configured");
+  }
 
-  const response = await axios.post(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
-    { contents: [{ parts: [{ text: `${prompt}\n\nConversation history:\n${historyText}` }] }] },
-    { headers: { "Content-Type": "application/json" } }
-  );
+  const historyText = history
+    .map(
+      (m) =>
+        `${m.role === "user" ? "Student" : "AI"}: ${m.content}`
+    )
+    .join("\n");
 
-  const candidates = response.data.candidates;
-  if (!candidates?.length) throw new Error("Gemini returned no candidates");
+  try {
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        contents: [
+          {
+            parts: [
+              {
+                text: `${prompt}\n\nConversation history:\n${historyText}`,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        timeout: 30000,
+      }
+    );
 
-  return candidates[0].content.parts[0].text.trim();
+    const candidate = response.data?.candidates?.[0];
+    const reply = candidate?.content?.parts
+      ?.map((part) => part.text || "")
+      .join("")
+      .trim();
+
+    if (!reply) {
+      throw new Error(
+        `Gemini returned no usable text. Finish reason: ${
+          candidate?.finishReason || "unknown"
+        }`
+      );
+    }
+
+    return reply;
+  } catch (error) {
+    console.error(
+      "Gemini API error:",
+      error.response?.status,
+      error.response?.data || error.message
+    );
+
+    throw error;
+  }
 }
 
 // 🔹 POST /chatbot/chat
