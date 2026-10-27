@@ -73,10 +73,11 @@ async function callGemini(prompt, history = []) {
   const GEMINI_KEY = process.env.GEMINI_API_KEY;
 
   if (!GEMINI_KEY) {
-    throw new Error("GEMINI_API_KEY is not configured");
+    throw new Error("GEMINI_API_KEY not set");
   }
 
   const historyText = history
+    .slice(-4)
     .map(
       (m) =>
         `${m.role === "user" ? "Student" : "AI"}: ${m.content}`
@@ -85,27 +86,32 @@ async function callGemini(prompt, history = []) {
 
   try {
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${GEMINI_KEY}`,
       {
         contents: [
           {
             parts: [
               {
-                text: `${prompt}\n\nConversation history:\n${historyText}`,
+                text: `${prompt}\n\nRecent conversation:\n${historyText}`,
               },
             ],
           },
         ],
+        generationConfig: {
+          maxOutputTokens: 256,
+          temperature: 0.7,
+        },
       },
       {
         headers: {
           "Content-Type": "application/json",
         },
-        timeout: 30000,
+        timeout: 60000,
       }
     );
 
     const candidate = response.data?.candidates?.[0];
+
     const reply = candidate?.content?.parts
       ?.map((part) => part.text || "")
       .join("")
@@ -113,7 +119,7 @@ async function callGemini(prompt, history = []) {
 
     if (!reply) {
       throw new Error(
-        `Gemini returned no usable text. Finish reason: ${
+        `No text returned by Gemini. Finish reason: ${
           candidate?.finishReason || "unknown"
         }`
       );
@@ -121,11 +127,12 @@ async function callGemini(prompt, history = []) {
 
     return reply;
   } catch (error) {
-    console.error(
-      "Gemini API error:",
-      error.response?.status,
-      error.response?.data || error.message
-    );
+    console.error("Gemini error:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+      code: error.code,
+    });
 
     throw error;
   }
