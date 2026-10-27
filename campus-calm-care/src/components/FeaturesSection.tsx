@@ -44,110 +44,119 @@ const FeaturesSection = () => {
   return (
     <section
       id="features"
-      className="bg-[#faf9f6] py-16 sm:py-20 lg:py-24"
+      className="bg-[#f8f8f5] py-16 sm:py-20 lg:py-24"
     >
-      <div className="container mx-auto px-5 sm:px-8 lg:px-12">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
 
-        {/* Section heading */}
-        <div className="mb-12 max-w-2xl lg:mb-16">
-          <p className="mb-4 text-sm font-medium uppercase tracking-[0.14em] text-[#53745a]">
-            What matters to us
-          </p>
+        {/* Heading */}
+        <div className="mb-12 max-w-2xl lg:mb-14">
+          <div className="mb-4 flex items-center gap-3">
+            <span className="h-px w-8 bg-[#54745b]" />
+            <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[#54745b]">
+              MindCare / Features
+            </span>
+          </div>
 
           <h2 className="mb-5 font-serif text-4xl font-medium leading-tight tracking-tight text-[#263b2e] sm:text-5xl">
             What We Offer
           </h2>
 
-          <p className="max-w-xl text-base leading-7 text-[#6c746d] sm:text-lg sm:leading-8">
+          <p className="max-w-xl text-base leading-7 text-[#687169] sm:text-lg sm:leading-8">
             Digital-first solutions to promote student well-being and create healthier campus environments
             through evidence-based tools and professional support.
           </p>
         </div>
 
-        {/* Main content */}
+        {/* Content grid */}
         <div className="grid items-start gap-12 lg:grid-cols-[1fr_0.95fr] lg:gap-16">
 
-          {/* Feature list */}
-          <div className="divide-y divide-[#e7e7df]">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="flex items-start gap-4 py-6 first:pt-0 last:pb-0 sm:gap-5"
-              >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#eaf0e6] text-[#527257]">
-                  <feature.icon
-                    size={22}
-                    strokeWidth={1.7}
-                  />
-                </div>
+          {/* Features */}
+          <div>
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
 
-                <div>
-                  <h3 className="mb-2 text-base font-semibold text-[#304434] sm:text-lg">
-                    {feature.title}
-                  </h3>
+              return (
+                <article
+                  key={feature.title}
+                  className="group flex gap-4 border-t border-[#e3e5dc] py-5 sm:gap-5 sm:py-6"
+                >
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center bg-[#e9eee5] text-[#4d7054]">
+                    <Icon size={21} strokeWidth={1.7} />
+                  </div>
 
-                  <p className="max-w-lg text-sm leading-6 text-[#707970] sm:text-[15px]">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex items-baseline justify-between gap-3">
+                      <h3 className="text-base font-semibold text-[#304334] sm:text-lg">
+                        {feature.title}
+                      </h3>
+
+                      <span className="hidden text-xs tabular-nums text-[#a0a69c] sm:block">
+                        0{index + 1}
+                      </span>
+                    </div>
+
+                    <p className="max-w-lg text-sm leading-6 text-[#707870] sm:text-[15px]">
+                      {feature.description}
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
           </div>
 
-          {/* Dashboard preview */}
-          <div className="lg:sticky lg:top-24">
-            <div className="overflow-hidden border border-[#e4e4da] bg-white">
+          {/* Dashboard */}
+          <div className="lg:pt-2">
+            <div className="overflow-hidden border border-[#e0e2d9] bg-white">
 
-              {/* Dashboard header */}
-              <div className="flex items-center justify-between border-b border-[#e9e9e2] px-5 py-4 sm:px-7">
+              {/* Header */}
+              <header className="flex items-center justify-between border-b border-[#e7e8e0] px-5 py-4 sm:px-6">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eaf0e6] text-[#527257]">
+                  <div className="flex h-8 w-8 items-center justify-center bg-[#e9eee5] text-[#4d7054]">
                     <Brain size={19} strokeWidth={1.7} />
                   </div>
 
-                  <span className="text-sm font-semibold text-[#304434]">
+                  <span className="text-sm font-semibold text-[#304334]">
                     MindCare
                   </span>
                 </div>
 
-                <span className="text-xs text-[#8a9289]">
+                <span className="text-xs text-[#838b81]">
                   Student portal
                 </span>
-              </div>
+              </header>
 
-              <div className="space-y-7 p-5 sm:p-7">
+              <div className="space-y-6 p-5 sm:p-6">
 
-                {/* Dashboard title */}
+                {/* Title */}
                 <div>
-                  <p className="mb-2 text-xs font-medium uppercase tracking-wider text-[#7d897d]">
+                  <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-[#7b877a]">
                     Overview
                   </p>
 
-                  <h3 className="text-2xl font-semibold tracking-tight text-[#293e30]">
+                  <h3 className="text-2xl font-semibold tracking-tight text-[#293d30]">
                     Student Dashboard
                   </h3>
                 </div>
 
                 {/* Assessment */}
-                <Card className="rounded-none border border-[#e7e8df] bg-[#fdfdfa] shadow-none">
-                  <CardContent className="p-5 sm:p-6">
-
+                <Card className="rounded-none border border-[#e5e6de] bg-[#fdfdfa] shadow-none">
+                  <CardContent className="p-5">
                     <div className="mb-5 flex items-center justify-between gap-3">
-                      <span className="text-sm text-[#707970]">
+                      <span className="text-sm text-[#707870]">
                         Current Assessment
                       </span>
 
-                      <span className="border border-[#dce6d8] bg-[#edf3e9] px-2.5 py-1 text-xs font-medium text-[#456449]">
+                      <span className="border border-[#dce5d7] bg-[#edf2e9] px-2.5 py-1 text-xs font-medium text-[#456449]">
                         In Progress
                       </span>
                     </div>
 
-                    <h4 className="mb-5 text-base font-semibold text-[#304434]">
+                    <h4 className="mb-5 text-base font-semibold text-[#344638]">
                       PHQ-9 Depression Screening
                     </h4>
 
                     <div
-                      className="h-1.5 w-full bg-[#e8eae1]"
+                      className="h-1.5 w-full bg-[#e7e9e0]"
                       role="progressbar"
                       aria-label="Assessment completion"
                       aria-valuenow={75}
@@ -163,22 +172,21 @@ const FeaturesSection = () => {
                   </CardContent>
                 </Card>
 
-                {/* Chat preview */}
-                <Card className="rounded-none border border-[#e7e8df] bg-white shadow-none">
-                  <CardContent className="p-5 sm:p-6">
-
-                    <div className="mb-6 flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eaf0e6] text-[#527257]">
+                {/* Chat */}
+                <Card className="rounded-none border border-[#e5e6de] bg-white shadow-none">
+                  <CardContent className="p-5">
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e9eee5] text-[#4d7054]">
                         <MessageCircle size={19} strokeWidth={1.7} />
                       </div>
 
-                      <span className="text-sm font-semibold text-[#304434]">
+                      <span className="text-sm font-semibold text-[#304334]">
                         Anonymous Support Chat
                       </span>
                     </div>
 
                     <div className="space-y-4">
-                      <div className="max-w-[90%] bg-[#f3f3ed] p-3.5 text-sm leading-6 text-[#626d63]">
+                      <div className="max-w-[90%] bg-[#f1f2ec] p-3.5 text-sm leading-6 text-[#5f6b60]">
                         "How are you feeling today? I'm here to listen and support you."
                       </div>
 
@@ -186,12 +194,11 @@ const FeaturesSection = () => {
                         "Thank you for being here. I've been feeling overwhelmed lately..."
                       </div>
                     </div>
-
                   </CardContent>
                 </Card>
 
-                {/* Dashboard footer */}
-                <div className="border-t border-[#e9e9e2] pt-4">
+                {/* Footer */}
+                <div className="border-t border-[#e7e8e0] pt-4">
                   <p className="text-xs leading-5 text-[#858c83]">
                     A supportive space for student well-being.
                   </p>
@@ -200,8 +207,7 @@ const FeaturesSection = () => {
               </div>
             </div>
 
-            {/* Simple caption */}
-            <p className="mt-4 text-xs leading-5 text-[#828980]">
+            <p className="mt-3 text-xs text-[#858c83]">
               A preview of the MindCare student experience.
             </p>
           </div>
