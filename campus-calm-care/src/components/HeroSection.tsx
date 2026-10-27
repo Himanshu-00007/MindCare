@@ -74,12 +74,7 @@ const HeroSection = () => {
                 </div>
               </div>
 
-              <p className="text-sm leading-6 text-[#7a837b]">
-                A calmer space to begin
-                <span className="block font-medium text-[#405947]">
-                  Your well-being comes first.
-                </span>
-              </p>
+              
             </div>
 
           </div>
@@ -101,21 +96,7 @@ const HeroSection = () => {
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#1b3025]/20 via-transparent to-transparent" />
             </div>
 
-            {/* Floating information card */}
-            <div className="absolute -bottom-6 left-4 max-w-[calc(100%-2rem)] rounded-2xl border border-[#e6e8df] bg-white/95 p-4 shadow-[0_12px_35px_rgba(36,59,48,0.09)] backdrop-blur-sm sm:bottom-7 sm:-left-8 sm:max-w-[280px] sm:p-5">
-              <div className="mb-2 flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#edf3eb] text-[#47765b]">
-                  <Play className="h-3.5 w-3.5 fill-current" />
-                </div>
-                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#718072]">
-                  MindCare
-                </span>
-              </div>
-
-              <p className="text-sm font-medium leading-6 text-[#334839]">
-                A safe, welcoming space for your mental well-being.
-              </p>
-            </div>
+            
 
             {/* Decorative accent */}
             <div className="absolute -bottom-5 right-5 -z-10 h-24 w-24 rounded-full bg-[#e4eadf] sm:-bottom-7 sm:-right-7 sm:h-32 sm:w-32" />

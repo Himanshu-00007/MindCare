@@ -1,47 +1,43 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from "@/components/ui/card";
 import {
   ClipboardCheck,
   Brain,
   MessageCircle,
   Users2,
   BarChart3,
-} from 'lucide-react';
+} from "lucide-react";
 
 const FeaturesSection = () => {
   const features = [
     {
       icon: ClipboardCheck,
-      title: 'Self-Assessment Tools',
+      title: "Self-Assessment Tools",
       description:
-        'PHQ-9, GAD-7, stress checkers and other validated mental health screening tools.',
+        "PHQ-9, GAD-7, stress checkers and other validated mental health screening tools.",
     },
     {
       icon: Brain,
-      title: 'AI-Powered Insights',
+      title: "AI-Powered Insights",
       description:
-        'Sentiment analysis and red-flag detection to provide personalized support recommendations.',
+        "Sentiment analysis and red-flag detection to provide personalized support recommendations.",
     },
     {
       icon: Users2,
-      title: 'Community Support',
+      title: "Community Support",
       description:
-        'Moderated peer discussions and support groups for students facing similar challenges.',
+        "Moderated peer discussions and support groups for students facing similar challenges.",
     },
     {
       icon: BarChart3,
-      title: 'Dashboard for Institutions',
+      title: "Dashboard for Institutions",
       description:
-        'Trends, analytics, and resource allocation insights for campus mental health teams.',
+        "Trends, analytics, and resource allocation insights for campus mental health teams.",
     },
   ];
 
   return (
-    <section
-      id="features"
-      className="bg-[#f8f8f5] py-16 sm:py-20 lg:py-24"
-    >
+    <section id="features" className="bg-[#f8f8f5] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-
         {/* Heading */}
         <div className="mb-12 max-w-2xl lg:mb-14">
           <div className="mb-4 flex items-center gap-3">
@@ -56,14 +52,14 @@ const FeaturesSection = () => {
           </h2>
 
           <p className="max-w-xl text-base leading-7 text-[#687169] sm:text-lg sm:leading-8">
-            Digital-first solutions to promote student well-being and create healthier campus environments
-            through evidence-based tools and professional support.
+            Digital-first solutions to promote student well-being and create
+            healthier campus environments through evidence-based tools and
+            professional support.
           </p>
         </div>
 
         {/* Content grid */}
         <div className="grid items-start gap-12 lg:grid-cols-[1fr_0.95fr] lg:gap-16">
-
           {/* Features */}
           <div>
             {features.map((feature, index) => {
@@ -101,26 +97,14 @@ const FeaturesSection = () => {
           {/* Dashboard */}
           <div className="lg:pt-2">
             <div className="overflow-hidden border border-[#e0e2d9] bg-white">
-
               {/* Header */}
               <header className="flex items-center justify-between border-b border-[#e7e8e0] px-5 py-4 sm:px-6">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center bg-[#e9eee5] text-[#4d7054]">
-                    <Brain size={19} strokeWidth={1.7} />
-                  </div>
-
-                  <span className="text-sm font-semibold text-[#304334]">
-                    MindCare
-                  </span>
+                  <div className="flex h-8 w-8 items-center justify-center bg-[#e9eee5] text-[#4d7054]"></div>
                 </div>
-
-                <span className="text-xs text-[#838b81]">
-                  Student portal
-                </span>
               </header>
 
               <div className="space-y-6 p-5 sm:p-6">
-
                 {/* Title */}
                 <div>
                   <p className="mb-2 text-xs font-medium uppercase tracking-[0.12em] text-[#7b877a]">
@@ -160,9 +144,7 @@ const FeaturesSection = () => {
                       <div className="h-full w-3/4 bg-[#63836a]" />
                     </div>
 
-                    <p className="mt-3 text-sm text-[#737b73]">
-                      75% Complete
-                    </p>
+                    <p className="mt-3 text-sm text-[#737b73]">75% Complete</p>
                   </CardContent>
                 </Card>
 
@@ -181,11 +163,13 @@ const FeaturesSection = () => {
 
                     <div className="space-y-4">
                       <div className="max-w-[90%] bg-[#f1f2ec] p-3.5 text-sm leading-6 text-[#5f6b60]">
-                        "How are you feeling today? I'm here to listen and support you."
+                        "How are you feeling today? I'm here to listen and
+                        support you."
                       </div>
 
                       <div className="ml-auto max-w-[90%] bg-[#45684d] p-3.5 text-sm leading-6 text-white">
-                        "Thank you for being here. I've been feeling overwhelmed lately..."
+                        "Thank you for being here. I've been feeling overwhelmed
+                        lately..."
                       </div>
                     </div>
                   </CardContent>
@@ -197,7 +181,6 @@ const FeaturesSection = () => {
                     A supportive space for student well-being.
                   </p>
                 </div>
-
               </div>
             </div>
 
@@ -205,7 +188,6 @@ const FeaturesSection = () => {
               A preview of the MindCare student experience.
             </p>
           </div>
-
         </div>
       </div>
     </section>

@@ -79,17 +79,6 @@ const AboutSection = () => {
                 <p className="flex-1 text-[15px] leading-7 text-[#727a73]">
                   {feature.description}
                 </p>
-
-                <div className="mt-7 flex items-center justify-between border-t border-[#edf0e9] pt-5">
-                  <span className="text-xs font-medium uppercase tracking-[0.12em] text-[#8a968b]">
-                    MindCare Support
-                  </span>
-
-                  <ArrowUpRight
-                    className="h-5 w-5 text-[#78917c] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    strokeWidth={1.7}
-                  />
-                </div>
               </CardContent>
             </Card>
           ))}
