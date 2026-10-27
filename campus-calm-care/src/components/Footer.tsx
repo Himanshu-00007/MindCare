@@ -63,7 +63,7 @@ const Footer = () => {
 
         {/* Bottom Copyright */}
         <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-          © 2025 MindCare.  <span className="block mt-1">Team - Algo Avengers</span>
+          ©MindCare.  
         </div>
       </div>
     </footer>

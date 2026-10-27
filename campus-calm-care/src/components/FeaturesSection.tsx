@@ -22,12 +22,6 @@ const FeaturesSection = () => {
         'Sentiment analysis and red-flag detection to provide personalized support recommendations.',
     },
     {
-      icon: MessageCircle,
-      title: 'Anonymous Counseling',
-      description:
-        'Chat or video sessions with licensed mental health professionals in complete privacy.',
-    },
-    {
       icon: Users2,
       title: 'Community Support',
       description:
