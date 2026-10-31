@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import StudentHeader from "../StudentHeader";
@@ -97,19 +98,7 @@ function SelfAssessmentForm() {
       return;
     }
 
-    /*
-      Scoring:
-
-      PHQ-9:
-      9 questions × 0-3 = 0-27
-
-      GAD-7:
-      7 questions × 0-3 = 0-21
-
-      GHQ:
-      5 questions × 0-3 = 0-15
-    */
-
+    // Calculate assessment scores
     const phq9Score = phq9Responses.reduce(
       (total, score) => total + score,
       0
@@ -129,6 +118,7 @@ function SelfAssessmentForm() {
     console.log("GAD-7 Score:", gad7Score);
     console.log("GHQ Score:", ghqScore);
 
+    // Get authentication token
     const token = localStorage.getItem("Token");
 
     if (!token) {
@@ -142,12 +132,40 @@ function SelfAssessmentForm() {
     setLoading(true);
 
     try {
-      await axios.patch(
+      // 1. Convert questionnaire arrays into individual fields
+      const responses = {
+        ...Object.fromEntries(
+          phq9Responses.map((score, index) => [
+            `phq${index + 1}`,
+            score,
+          ])
+        ),
+
+        ...Object.fromEntries(
+          gad7Responses.map((score, index) => [
+            `gad${index + 1}`,
+            score,
+          ])
+        ),
+
+        ...Object.fromEntries(
+          ghqResponses.map((score, index) => [
+            `ghq${index + 1}`,
+            score,
+          ])
+        ),
+      };
+
+      console.log("Individual Responses:", responses);
+
+      // 2. Send scores and individual responses to Express backend
+      const response = await axios.patch(
         `https://mindcare-lf3g.onrender.com/api/v1/students/self-assessment/${studentId}`,
         {
           PHQ9: phq9Score,
           GAD7: gad7Score,
           GHQ: ghqScore,
+          responses: responses,
         },
         {
           headers: {
@@ -157,34 +175,43 @@ function SelfAssessmentForm() {
         }
       );
 
+      // 3. Receive ML prediction from Express backend
+      const mlPrediction = response.data.mlPrediction;
+
+      console.log("ML Prediction:", mlPrediction);
+
+      // 4. Show success message
       showSnackbar(
-        "✅ Self assessment completed successfully!",
+        "Self assessment completed successfully!",
         "success"
       );
 
-      // Send individual scores to ResultsPage
+      // 5. Navigate to Results page
       setTimeout(() => {
         navigate("/results", {
           state: {
             phq9Score,
             gad7Score,
             ghqScore,
+            mlPrediction,
           },
         });
       }, 1000);
 
-      // Reset form
+      // 6. Reset form
       setPhq9Responses(Array(9).fill(-1));
       setGad7Responses(Array(7).fill(-1));
       setGhqResponses(Array(5).fill(-1));
+
     } catch (error: any) {
-      console.error(error);
+      console.error("Assessment Error:", error);
 
       const errorMessage =
         error.response?.data?.message ||
         "Failed to save assessment. Please try again.";
 
-      showSnackbar(`❌ ${errorMessage}`, "error");
+      showSnackbar(errorMessage, "error");
+
     } finally {
       setLoading(false);
     }

@@ -153,25 +153,97 @@ const studentLogout = async (req, res) => {
 const updateSelfAssessment = async (req, res) => {
   try {
     const { studentId } = req.params;
-    const { PHQ9, GAD7, GHQ } = req.body;
 
+    // Get total scores from frontend
+    const { PHQ9, GAD7, GHQ, responses } = req.body;
+
+    // Check whether all 21 answers are provided
+    if (!responses) {
+      return res.status(400).json({
+        message: "Please provide all 21 questionnaire responses"
+      });
+    }
+
+    const requiredFields = [
+      ...Array.from({ length: 9 }, (_, i) => `phq${i + 1}`),
+      ...Array.from({ length: 7 }, (_, i) => `gad${i + 1}`),
+      ...Array.from({ length: 5 }, (_, i) => `ghq${i + 1}`)
+    ];
+
+    for (const field of requiredFields) {
+      if (
+        !Number.isInteger(responses[field]) ||
+        responses[field] < 0 ||
+        responses[field] > 3
+      ) {
+        return res.status(400).json({
+          message: `Invalid or missing response: ${field}`
+        });
+      }
+    }
+
+    // 1. Save questionnaire scores in MongoDB
     const updatedStudent = await Student.findByIdAndUpdate(
       studentId,
-      { 
+      {
         "mental_health_score.PHQ9": PHQ9,
         "mental_health_score.GAD7": GAD7,
         "mental_health_score.GHQ": GHQ
       },
-      { new: true } // return the updated document
+      { new: true }
     );
 
     if (!updatedStudent) {
-      return res.status(404).json({ message: "Student not found" });
+      return res.status(404).json({
+        message: "Student not found"
+      });
     }
 
-    return res.status(200).json({ message: "Self assessment updated successfully", student: updatedStudent });
+    // 2. Send individual answers to Python ML API
+    let mlPrediction = null;
+    let mlError = null;
+
+    try {
+      const mlResponse = await fetch(
+        `${process.env.ML_SERVICE_URL}/predict`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(responses)
+        }
+      );
+
+      if (!mlResponse.ok) {
+        throw new Error(`ML API returned status ${mlResponse.status}`);
+      }
+
+      mlPrediction = await mlResponse.json();
+
+    } catch (error) {
+      console.error("ML Service Error:", error.message);
+      mlError = "ML prediction service is currently unavailable";
+    }
+
+    // 3. Return database and ML results
+    return res.status(200).json({
+      message: "Self assessment updated successfully",
+
+      student: updatedStudent,
+
+      mlPrediction: mlPrediction,
+
+      mlError: mlError
+    });
+
   } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    console.error("Self Assessment Error:", error);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message
+    });
   }
 };
 
