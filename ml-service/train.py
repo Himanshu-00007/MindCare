@@ -4,7 +4,7 @@ import pandas as pd
 import joblib
 
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
 
@@ -24,6 +24,7 @@ features = (
 
 target = "PHQ9_severity_label"
 
+
 # Check required columns
 required_columns = features + [target]
 
@@ -37,11 +38,13 @@ if missing_columns:
         f"Missing columns in dataset: {missing_columns}"
     )
 
+
 # Remove rows containing missing values
 data = data.dropna(subset=required_columns)
 
 X = data[features]
 y = data[target]
+
 
 # Display class distribution
 print("\nClass Distribution:")
@@ -52,7 +55,7 @@ if y.nunique() < 2:
 
 
 # 3. Split dataset into training and testing
-# Removed stratify=y because the severe class has only 1 record.
+# 80% data for training and 20% for testing
 
 X_train, X_test, y_train, y_test = train_test_split(
     X,
@@ -65,8 +68,9 @@ print("\nTraining records:", len(X_train))
 print("Testing records:", len(X_test))
 
 
-# 4. Create Decision Tree model
-model = DecisionTreeClassifier(
+# 4. Create Random Forest model
+model = RandomForestClassifier(
+    n_estimators=100,
     max_depth=5,
     random_state=42
 )
@@ -75,7 +79,7 @@ model = DecisionTreeClassifier(
 # 5. Train the model
 model.fit(X_train, y_train)
 
-print("\nModel training completed!")
+print("\nRandom Forest model training completed!")
 
 
 # 6. Make predictions
@@ -85,7 +89,11 @@ predictions = model.predict(X_test)
 # 7. Evaluate model
 accuracy = accuracy_score(y_test, predictions)
 
-print("\nModel Accuracy:", round(accuracy * 100, 2), "%")
+print(
+    "\nModel Accuracy:",
+    round(accuracy * 100, 2),
+    "%"
+)
 
 print("\nClassification Report:")
 
@@ -110,7 +118,4 @@ print("\nModel saved successfully!")
 print("Location: model/mindcare_model.pkl")
 
 
-# IMPORTANT:
-# This is synthetic demonstration data.
-# Labels are calculated from PHQ-9 score thresholds.
-# This model is NOT clinically validated.
+
